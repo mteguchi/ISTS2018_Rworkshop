@@ -1,0 +1,100 @@
+---
+title: "R Workshop ISTS 2018 - Getting Started"
+author: "Tomo Eguchi"
+date: '`r Sys.Date()`'
+output: pdf_document
+---
+
+#Introduction
+Thank you for signing up to attend my R workshop at 2018 ISTS meeting in Kobe, Japan. I look forward to meeting with you. Just to get us started, I put together a brief introductory document. This will be a hands-on workshop where you will be using your laptop to learn how to manipulate data in R, conduct statistical analyses, and make publication ready figures. At the end of this workshop, you will have example code to conduct data analyses of your own using R. 
+
+I have taught similar R workshops at my work place a couple times. I have taught gradulate level statistics classes using R at Moss Landing Marine Laboratories in California, USA, as a visiting lecturer in 2012 and 2013. I have also organized Bayesian statistics workshops at the Bienniel Conference on Marine Mammals and past ISTS meetings. 
+
+#Preparing for the workshop
+Although R can be used by itself and with a text editor, I use RStudio, which combines a text editor, R console, data viewer, package organizer, help viewer, figure viewer, etc. It is free and is used by many R programmers. They also provide free webinars on a wide variety of topics. They even organize annual conference. I encourage you to use it and I will use it in this workshop. Please install R first, then RStudio, before the workshop. R can be found here (https://cran.r-project.org/) and RStudioe here (https://www.rstudio.com/). 
+
+Because we want to start without worrying about configurations of R and RStudio at the workshop, please follow the process below and see if your RStudio and R are installed correctly before Wednesday, February 14, 2018. If you encounter problems, please let me know as soon as possible. 
+
+Once you think you have installed RStudio and R, please start RStudio and create a new project by clicking on the upper right corner of the screen.
+
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/RStudio_NewProject_v11423.png')
+```
+
+
+Followed by selecting "New Direcotry":
+
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/RStudio_NewDirectory_v11423.png')
+```
+
+Then, select "New Project":
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/RStudio_ProjectType_v11423.png')
+```
+
+Enter an appropriate project name:
+
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/RStudio_ProjectName_v11423.png')
+```
+
+You should have created a new project in a new directory. All subsequent files related this project can be dropped into this folder. Here is what mine looks like. The color scheme is different because the image was created using an older version of RStudio. 
+
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/Windows_NewDirectory.png')
+```
+
+This is what it should look like inside the directory:
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/Windows_InsideNewDirectory.png')
+```
+
+If you want to change the color scheme (I like dark background, which seems to be kinder on my eyes), you can go to Tools - Global Options and select a different appearance, like so:
+
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/GlobalOptions.png')
+```
+
+Once this is setup, please save the file named test_RStudio_setup.Rmd, which I sent to you, into the working directory. To determine your current working directory, please type getwd() at the prompt in the Console window like so:
+
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/getwd.png')
+```
+
+While you are at the console and connected to the Internet, please type install.packages("ggplot2") at the prompt:
+
+\>install.packages("ggplot2") 
+
+You should see some "stuff" goes through the console. Hopefully, it will not give you too many issues - you may have to choose an R library depository (please choose physically closest one to you). 
+
+After you placed the file (test_RStudio_setup.Rmd) into the directory, you should be able to see it in the Files panel of your RStudio (white circle). Please open the file and click on the small green triangle (red circle):
+
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/FilesFolderAndRunChunk.png')
+```
+
+If everything goes well, you should see something similar to the following. 
+
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/successfulRun.png')
+```
+
+If you have not installed the ggplot2 package, you may see an error message. Please install and load the package.  At the prompt of Console
+
+\>install.packages('ggplot2')
+
+\>library(ggplot2)
+
+If you continuously see error messages, please send me the error messages (tomo.eguchi@noaa.gov). 
+
+Once you get these steps done, please click on the "Preview" button:
+
+```{r, echo=F, out.width = '400px'}
+knitr::include_graphics('images/notebook_preview.png')
+```
+
+You should see an RStudio file viewer opens up and see your document, code and plots included. 
+
+Finally, if you want to get ahead of the curve, please install the following packages; "tidyverse", "rmarkdown", "knitr", "ggmap", and "viridis". In case we don't get WiFi connection at the hotel, installing these packages at your home may be necessary. 
+

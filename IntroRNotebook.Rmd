@@ -1,0 +1,1941 @@
+---
+title: "Introduction to R Notebook"
+author: "Jeff Laake"
+output:
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: yes
+  html_document:
+    df_print: paged
+    toc: yes
+---
+
+This document is an RStudio notebook.  If you are currently using scripts to run your analyses, I highly recommend using notebooks which is a first step to using RMarkdown to generate reports/manuscripts.  I'll demonstrate how you use notebooks as we go through this tutorial.
+
+
+# Class Goals
+
+1) Learn how to continue learning R
+2) Learn R syntax so you can read/modify/write R code to suit your needs
+3) Learn linear and general linear model structures via R formulas
+
+  
+# Learning R
+
+There is a limited amount of material I can teach in 2 days and R is enormous.  Also, R is constantly growing. Thus, it is essential for you to have learning resources so you can continue to learn R beyond what you learn here in the next 2 days.
+
+As part of the reading materials that I sent a few weeks ago there was a pdf entitled How to Learn R.  Some of the material is outdated but much of it is still useful.  I'll cover the highlights of that document and some more. I can think of at least 5 ways that you can continue to learn R.
+
+First, invest in a good book or two. One of the most useful books that I have encountered is Data Manipulation with R by Phil Spector. It is part of the Use-R series published by Springer(http://www.springer.com/us/book/9780387747309). Another more general book is the Art of R Programming by Norman Matloff. A free version is available at http://diytranscriptomics.com/Reading/files/The%20Art%20of%20R%20Programming.pdf
+
+Second, learn to become comfortable with the R help and manuals. In addition there is an RNews publication (https://cran.r-project.org/doc/Rnews/) that was replaced by the R Journal (https://journal.r-project.org/). Another useful resource is the open access Journal of Statistical Software that often contains articles describing R statistical packages (https://www.jstatsoft.org/index) Now, let's explore R help via RStudio. We will use lm as a example. All help files including those with packages are structured in the same way. As part of many help files is one ore more examples that demonstrate the function.  You can run those in R with the example function as shown below.
+
+```{r}
+example(lm)
+```
+
+Third, take an online class.  Classes are offered for free on various subjects from Rstudio. You can attend these live online or review past classes on your own schedule.  See https://www.rstudio.com/online-learning/.  Another group is Data Camp (https://www.datacamp.com/).
+
+Fourth, read and explore other's code. R is completely open source so you can examine and study the way in which others write code and accomplish tasks in R. If you want to look at the code in a function just type the name of the function without parentheses. For example,
+
+```{r}
+lm
+```
+
+If you are relatively new to R that may be more scary than useful but as you learn more R it can be very useful to study other's code. Next I'll show you how you can explore the code in a package using the vegan package as an example. First, we'll look at the help in RStudio for the vegan package and then I'll show you how to access the code at https://cran.r-project.org/web/packages/vegan/index.html. Typically you can find the web page for a package with a search of "cran packagename" (e.g. "cran vegan"). Another place to look at code is the code sharing site https://github.com.  My code development is at https://github.com/jlaake.
+
+Finally, you can learn from each other or from total strangers but in the latter case make sure to do your homework before you post questions to listservers such as R-Help (https://stat.ethz.ch/mailman/listinfo/r-help) and Stack Overflow (https://stackoverflow.com/questions/tagged/r).  If all else fails, you can email me but I'm mostly retired so you may not get an immediate response.
+
+
+# Some Initial Thoughts
+
+Bear with me as I try to brainwash you with some of my personal philosophy about data analysis and programming. R was designed as an interactive environment but is unlike your typical computer application with a graphical user interface(gui). To use R you need to know and use the R language. Being an old FORTRAN programmer that learned programming in the days of card punches and paper tape machines, this does not disappoint me. I'm quite use to reading reference manuals and becoming proficient with a language to accomplish tasks. However, for many, learning the language is a daunting task. Don't worry. Just like a good hangover, the pain will pass even if your agony at the time seems perpetual.
+
+I believe that gui applications have many benefits for tasks such as word processing and the like. However, with data analysis you need a computing environment that provides a scripting capability. With scripting (programming) you can document your analysis, ensure reproducibility in your research and easily modify, replicate or simulate your analysis. While point and click interfaces are typically easier to learn, they soon become a drudgery with repetitive tasks and any error in the final result may not be traceable after a multitude of steps.
+
+Once upon a time (pre-R), I was a big user of Excel for manipulating data. R cured me of that addiction and provided me with a much less detrimental addiction for data manipulation and analysis. Patrick Burns in a piece titled Spreadsheet Addiction (http://www.burns-stat.com/) sums it up quite well:
+
+The goal of computing is not to get an answer, but to get the correct answer.
+ Often a wrong answer is much worse than no answer at all.
+ There are a number of features of spreadsheets that present a challenge
+ to error-free computing.
+ 
+I believe his quote could easily be expanded to many other gui applications used for data analysis and computing. While a scripted analysis can easily contain flaws, they are traceable and correctable. With the development of RStudio the integration of data analysis and writing provides an environment for reproducible research which should lead to better science.
+
+My related lesson here is that there is no right or wrong way to accomplish a task in R as long as it produces the correct answer. Also, do not worry about the execution speed of your code until it becomes a problem. I have had a lot of people tell me "Oh I am embarassed to have you look at my code". Don't be! There can better ways to code a task but what is most important is that it produces the correct answer and you can understand it when you go back to look at it next month or next year.  To that end, use lots of comments in your code and use notebooks like this one.
+
+# Base R
+I am going to teach you the syntax and functions for base R because all of the packages and new approaches are built on base R. In teaching say data structures and data manipulation I could just jump into tidyverse which is a series of packages written by Hadley Wickham. However, you will encounter scripts and functions written by others (like me) that uses base R syntax and functions and you would be lost without that foundation. That said I encourage you to look at tidyverse as you continue to learn R. Once you become more comfortable with R, another good book resource is the O'Reilly book R for Data Science by Hadley Wickham and Garrett Grolemund. Both are excellent instructors.
+
+# Be Interactive with R
+
+If you own a calculator (which you probably don't), do yourself a favor and throw it in the trash or give it to a student to use in grade school. While you are at it, you can also remove any of those calculator apps from your computer.  R is your new calculator. R is interactive and that is how you should use it.
+
+For example, you can get the printed result for any calculation by typing the equation as shown below: 
+```{r}
+1+1
+sqrt(2)
+exp(1)
+```
+The result of each calculation is a vector containing a single number. What you see is a printed display of the contents of the vector which is why you see a [1] before the value.  After the result is computed, R uses a default print function to display the contents of the vector with a default number of digits displayed. This can be made explicit using the print function:
+```{r}
+print(1+1)
+print(sqrt(2))
+print(sqrt(2),digits=10)
+print(exp(1))
+print(exp(1),digits=12)
+```
+While all of this may seem a bit pedantic, it is common to see queries about this subject on R-Help.
+ 
+What many people don't understand is that when you perform a calculation or type the name of an object, a print function specific to the type of object is executed to display the contents of the object. For numeric vectors, the default print function has a default number of digits that are displayed. The default number of digits can be set with the options function (e.g., options(digits=n)).
+
+For other types of objects, the print function for that object may only print portions of the object or show the contents in a summary fashion (e.g., lm as we showed above).
+
+Always remember that the contents of an object are not necessarily the same as what is displayed by the print function for that object. Precision does have its limits!
+
+```{r}
+# 11 digits
+x=0.99999999999
+print(1-x,digits=20)
+# 15 digits
+x=0.999999999999999
+print(1-x,digits=20)
+# 16 digits
+x=0.9999999999999999
+print(1-x,digits=20)
+# 17 digits
+x=0.99999999999999999
+print(1-x,digits=20)
+```
+
+# Assignment Operator
+
+While it is useful to have a powerful calculator, data analysis typically involves more than a single calculation and we will want to save the results of calculations by assigning the results to a named object.
+ 
+The assignment operator in R is <- (e.g., x <- 1) which you can read as 1 is assigned to x or x gets 1. However, you can also use 
+= (e.g., x=1). I'm lazy so I use =. in Rstudio, you can be lazy too and use <- by using the shortcut Alt + - in Windows/Linux or Option + - for Mac in  There are a few places where = will not work.  The one I encounter is when you embed an assignment inside of a function because arguments to a function are assigned with the =. suppressWarnings is a function in R that will suppress warning messages from a statement. Below is an example where using = does not work but <- does. 
+
+```{r}
+# the following will not work
+#suppressWarnings(x=sqrt(-1))
+# but this does
+suppressWarnings(x<-sqrt(-1)) 
+x
+cat("\n")
+# this is what happens without the suppressWarnings
+x = sqrt(-1)
+x
+
+```
+Some choose to use <- to avoid confusion with the argument=value in function calls or the boolean equality operator ==. You can use either and it is up to you.
+
+# R Objects
+
+Everything in R is an object and there are different kinds of objects in R. Some objects are functions and others are variables or other data structures.  
+
+## Object Names
+
+Each object has a name to identify the object. Object names in R can include letters, numbers, an underscore (_) or period (.) but they can only begin with a letter or period(.). R is case-sensitive.  The names x and X are not the same. If you get an error about an object not found, the most common errors are due to mis-spelling and incorrect case.
+
+```{r}
+x=1/2
+# If you type uppercase X then unless it exists in your workspace it will give the error
+#X
+#Error: object 'X' not found
+```
+
+## Object Attributes
+
+In addition to the object name, each object has a number of attributes that describe the contents of the object and how the object is used and treated. The mode and class are two of the most important attributes. You can use the mode, class and str functions to examine object attributes.
+
+If you see the word atomic in an error message, you might wonder why your code nuked (ok bad pun). Atomic structures in R are the simplest structures in which all of the elements are of the same mode. The primary modes for atomic data are numeric, logical and character. You'll probably never encounter the lesser used modes of complex and raw. 
+
+Logical mode has values TRUE and FALSE. Do not use T and F even though these will work because they are not reserved and you can alias those values by using T or F as an object name.  TRUE and FALSE are reserved and not valid object names and you'll get an error if you try something like FALSE=2 but F=2 will work and then if you use F it will use 2 rather than FALSE.
+
+Character mode is specified with quotation marks. Below are examples of the primary data modes and calls to attribute functions:
+```{r}
+mode(TRUE) 
+class(TRUE)
+mode("Laake")
+class("Laake")
+mode(1) 
+class(1)
+mode(as.integer(1)) 
+class(as.integer(1)) 
+```
+For these basic objects the class and mode are the same with the exception of integer. Numeric mode is general and includes both double precision (the default) and integer. If you specify the number 1 as above, it is stored in double precision unless you specify the mode to be integer using as.integer function or setting the mode with the mode function.
+
+## Special Object Values
+Previously, when I computed sqrt(-1) it printed NaN. So what is NaN?  It stands for Not a Number which means you have performed an operation that produced an invalid value like the sqrt of -1. Other operations like dividing by zero will report Inf which stands for Infinite and -Inf for negative infinity.
+```{r}
+1/0
+-1/0
+```
+
+The value NaN is different from NA which means Not Available and is reserved for missing values. Finally, another special value is NULL which stands for nothing and is often used to create a variable but assign nothing to it.  It is also used to remove a variable from a list or dataframe as shown later.
+```{r}
+z=NULL
+z
+```
+
+There are functions that allow you to test for special values as well as different modes and classes:
+
+```{r}
+suppressWarnings(x<-sqrt(-1))
+is.nan(x)
+is.infinite(1/0)
+is.null(z)
+is.na(NA)
+```
+There are also functions like is.numeric that allow you to test for validity of results.
+```{r}
+is.numeric("A")
+is.numeric(2)
+```
+
+# Workspaces
+Objects are stored in your workspace which is held in memory during the R session until you save the workspace, often but not necessarily at the end of the session.  You can look at the objects in your workspace with the "ls" function.
+
+```{r}
+ls()
+```
+
+With the function "getwd", you can see the location of your working directory which is where the workspace will be saved.
+
+
+```{r}
+getwd()
+```
+
+RStudio will ask if you want to save the workspace when you exit RStudio or you can use the function "save.image"
+```{r}
+save.image()
+```
+
+The workspace is named .Rdata by default. Although you can provide a file name before the ".", I have not found a need to do so. If you use projects in RStudio, it will create a separate directory for each project in the Documents/Projects directory and each project can have its own workspace.
+
+# Using Functions
+
+Most of what you do with R involves calling functions. And without describing how functions work, I've been using some simple functions like sqrt().  A function accepts values for its arguments, assigns defaults (if any) for unspecified arguments, manipulates values of the arguments to accomplish a particular task, and then will usually return an object which you can use or assign to an object for later usage. Some functions like plot, perform an action but don't return a value.
+
+For example, the function "sqrt" computes the square root of its first argument and returns its value. So far We specified the argument value by order (sqrt(2)) because there is only one argument.  The argument name is x, so alternatively we could have explicitly specified the argument value with sqrt(x=2).
+
+Now let's consider the "log" function in R. It has 2 arguments named "x" and "base". The default value for "base" is exp(1) (as shown in help file) which computes the natural logarithm often shown as ln in mathematics. The default value is used if you do not specify any value for the argument. 
+
+```{r}
+log(x=exp(1))
+log(exp(1))
+args(log)
+```
+
+If we specify a different value for base specifying each argument explicity by name, we will get a different result
+```{r}
+log(x=exp(1),base=10)
+```
+
+or arguments can be specified soley by order:
+```{r}
+log(exp(1),10)
+```
+
+For functions with many arguments, it is unlikely that you will want to specify them all by order. Instead, a typical approach is to specify the first argument or two by order and remaining arguments by name as shown below:
+
+```{r}
+log(exp(1),base=10)
+```
+
+If an argument does not have a default, you will get an error if it is not specified. You can also get an error if you specify an argument name that doesn't exist for the function (e.g., log(10,Base=10)).
+
+In the help files you will also see the special function argument "..." like in the concatenate function (c()) described below.  The "..." means an indeterminate number of arguments can be specified by value (e.g., c(1,2,3)).  In addition to using it to handle any number of arguments like concatenate, it is also used to pass arguments from a main function to another function it calls.
+
+<!-- Some functions (e.g., print, summary, plot) are called generic functions because they operate on several classes of objects and are actually a set of functions linked to the base function (e.g. summary) with what is termed an S3 class. S3 classes are a simple structure for a type of object-oriented programming. You only need to know that when you use a generic function, it evaluates -->
+the class of the first argument (usually x or object) and calls a function that was designed for that class, if it exists. The name of the class-specific function will be generic.class (e.g., summary.lm when the first argument object has class lm). If a function does not exist for the class of the first object, then it will call generic.default which is the default for that generic function (e.g., summary.default). You can see what classes have specific functions for a generic by using the methods function:
+```{r}
+methods("summary")
+```
+
+# Exercise 1
+
+1) Find the RMark page on CRAN and download the source.
+2) In what directory are packages stored for R on your computer? Look at help page for .libPaths and use it to find that directory.
+3) Find the directory containing the RMark package in an explorer window and examine the contents of MarkModels.pdf.
+4) List the contents of your workspace
+5) What is the location of your current working directory?
+
+# Data Structures
+
+There are several very useful data structures in R including vectors, matrices, arrays, dataframes and lists. You should master them all and in particular dataframes and lists if you plan to use RMark.
+
+## Vector
+
+So far we have only shown single values/variables(scalars) which are actually vectors with single elements.  To specify more than one element in a vector, use the concatenate (i.e., paste together) function which is c(...). All of the elements in the vector most have the same mode or the mode of non-conforming elements will be coerced to a common mode.
+
+In the following example, if we mix numeric and character, the numeric values are converted to character:
+```{r}
+c("B",1,"C")
+```
+
+However, if it can convert the characters to numeric, you can do so with as.numeric:
+```{r}
+as.numeric(c("2",1,"3"))
+```
+
+Let's look at this more closely, as this is the first time I have nested a function with inside a function. c("2",1,"3") creates a vector of 3 characters and this in turn is used as the first argument to the function as.numeric which converts the character vector to a numeric vector. We coud have broken up the single line into two lines to make this more clear.
+
+```{r}
+x=c("2",1,"3")
+as.numeric(x)
+```
+
+
+In addition to having a mode and class, vectors also have a length attribute which can be retrieved with the length function.
+```{r}
+length(x)
+```
+
+
+
+### Factors
+
+Next I'll demonstrate how to create a factor object by creating a character vector and then using the factor function. Factor objects are of numeric mode but with a class attribute that gives it special treatment in which labels (character strings) are displayed even though the storage mode is numeric:
+
+```{r}
+my.factor=c("B","A","C")
+my.factor=factor(my.factor)
+mode(my.factor)
+class(my.factor)
+my.factor
+```
+
+What is stored in my.factor is a numeric vector c(2,1,3) because the levels are alphabetical by default so B is the second, A is the first, and C is the third. We can see that by using the "as.numeric" function:
+
+```{r}
+as.numeric(my.factor)
+```
+
+You can modify the order of the levels in a factor using the "levels" argument for a character vector or with the "relevel" function for a factor vector:
+
+```{r}
+my.factor=c("B","A","C")
+my.factor=factor(my.factor,levels=c("C","B","A"))
+my.factor
+as.numeric(my.factor)
+my.factor=relevel(my.factor,"B")
+my.factor
+as.numeric(my.factor)
+```
+
+It is important to understand factors because they are used in just about every aspect of statistical modelling and data manipulation. I'll cover more on factors later. Now I'll move onto a more general discussion of data structures and subscripting (subsetting) in R.
+
+
+### Vector sequences
+
+Vectors that will be useful for subscripting can be created quickly with functions that create sequences. The functions we will use from simplest to most complex are the colon(:) sequence operator (effectively a function), the sequence (seq) function and the repeat (rep) function.
+ 
+For numeric arguments, a:b generates a regular sequence of increasing (+1) or decreasing (-1) numbers from a to b. If a and b are integers the sequence is of integers; otherwise they are of type double.
+
+```{r}
+1:8
+8:1
+-5:5
+5:-10
+5.01:10
+class(5.01:10)
+class(5:10)
+```
+
+If the colon operator is used with factors it will generate sequences of combinations similar to the interaction function:
+
+```{r}
+num.fac=factor(1:3)
+alpha.fac=factor(c("A","B","C"))
+num.fac:alpha.fac
+alpha.fac:num.fac
+interaction(alpha.fac,num.fac)
+```
+
+The colon operator is a short-hand for the more general "seq" function which can handle numeric, dates and times and the sequences can increment by values other than +1/-1. Here are some illustrations of sequences that can be generated with "seq":
+
+```{r}
+seq(from=1, to=9, by=2)
+seq(3,15,3)
+seq(4,-4,-2)
+seq(from=as.Date("2010-01-01"),to=as.Date("2010-01-30"),by=5) 
+```
+
+The more general function "rep" can be used to generate repeated sequences of vectors of any mode and also date, times and factors. The function arguments "each" and "times" act differently to provide alternative sequence structures.For example,
+
+```{r}
+rep(1:5,each=5)
+rep(c("A","B","C"),times=5)
+rep(my.factor,3)
+```
+
+The first argument of the function should be a vector and since "rep", "seq", or : return a vector, the functions can be nested as shown above with : and with "rep" and "seq" below:
+
+```{r}
+rep(seq(5,9,2),each=5)
+rep(rep(c(1,2),3),each=5)
+# or alternatively
+rep(c(rep(1,5),rep(2,5)),3) 
+```
+
+### Vector Element Names
+Names can be assigned to the elements of a vector when it is created or using the names function after the vector is created. Below we create a vector with 2 elements with the first named "x" and the second "y".
+
+```{r}
+my.vector=c(x=1,y=2)
+my.vector
+str(my.vector)
+```
+
+Notice that in specifying the names we did not use quotes for the names inside the concatenate function. However, if we assign the names with the "names" function, the names must be specified in quotes.
+
+```{r}
+names(my.vector)=c("A","B")
+my.vector
+
+```
+
+If instead we used names(my.vector)=c(A,B) what do you think would happen? Try it. Names can be used in subscripting/subsetting with vectors but become even more useful with more complex data structures like dataframes and lists. 
+
+## Vectorized Operations and Recycling
+Many functions/operators in R operate directly on vectors rather than the elements of the vector individually. For example, the first argument of the sqrt function (x) is a vector and sqrt returns the square root of each number in the vector. This makes R fast and much easier to read and write code.  When I learned FORTRAN66 back in the dark ages, to compute the square root of a vector, you have have to loop over each element in the vector, take its square root, and assign it to an element in another vector. I'll demonstrate this later when we talking about programming constructs such as loops.  But for now realize that R takes care of that for you with most functions and operators.  For example:
+```{r}
+x=sqrt(c(1,4,9,16))
+x
+```
+
+Operations such as addition, multiplication etc are also vectorized. For example, to mulitply each element in the vector x by 2 it is as simple as:
+
+```{r}
+2*x
+```
+
+What is going on in the background involves a concept called recycling. The value 2 is a vector of length 1 and it is repeated to a vector of length 4 with each value being 2 and then the 2 vectors are multiplied elementwise. That may seem a bit pedantic but it becomes more relevant when you consider the following example:
+
+```{r}
+c(1,2)*x
+```
+
+In this case the vector was recycled (repeated) until it was the same length as x and then the multiplication conducted elementwise. What do you think would happen if we entered c(1,2,3)*x? 
+
+Recycling vectors can be quite useful in manipulating matrices with vectors.
+
+## Subscripting/subsetting vectors
+
+Now let's consider how to extract a subset of a vector, also known as subscripting. Subscripts can be specified using numeric, logical or name subscripts. The subscript syntax for a vector uses single square braces [].
+ 
+### Numeric Subscripting
+Numeric subscripting of a vector can be inclusive (which to include) or exclusive (which to exclude).  Consider the sequence from 5 to 100 by 5's. Here is how you would extract the 6th element in the sequence:
+```{r}
+my.sequence=seq(5,100,5)
+my.sequence[6]
+```
+
+Now let's say you wanted everything but the 6th element. Then you use the negative subscript to exclude:
+```{r}
+my.sequence[-6]
+```
+
+You can extract a subset of more than a single element by providing a numeric vector for the subscripts, but you cannot mix positive and negative subscripts:
+
+```{r}
+my.sequence[c(1,6,18)]
+my.sequence[-(5:8)]
+```
+What would have happened if I left off the () in the second statement? Try it.
+
+While it may look a little strange at first, consider the following which has nesting of subscripts shown without and with parentheses to be explicit:
+```{r}
+my.sequence[c(1,6,18)][2]
+(my.sequence[c(1,6,18)])[2]
+```
+The above selects the second element of the subset containing the first, sixth and 18th elements of the original sequence. It can be made more explicit as shown below:
+
+```{r}
+# extract 3 elements and assign to elem3
+elem3=my.sequence[c(1,6,18)]
+# get second of the three
+elem3[2]
+```
+
+Whether you split up operations or nest them is entirely up to you. The tidyverse approach to nesting uses a package called magrittr which adds a pipe operator to R but I won't describe that here.
+
+You can specify multiple copies of elements shown below with numeric subscripts:
+```{r}
+my.sequence[c(rep(2,2),rep(6,4))]
+```
+
+
+### Logical Subscripting
+Logical subscripting is a powerful form of subsetting that you'll use frequently. Before I introduce logical subscripts, we need to consider logical operations and operators.  Many of the common operators like <,>,<=,>= (less than, greater than, less than or equal and greater than or equal) may be familiar. Equality uses a double == and the exclusion of equality uses the "not" operator (!) as in !=.
+
+A logical operation includes comparison of two objects (typically vectors) and an operator. When the comparison is for vectors, the result is a logical vector (vector of TRUE or FALSE values). Below are some examples:
+
+```{r}
+my.sequence<25
+my.sequence>=25
+my.sequence==25
+my.sequence!=25
+```
+
+The value 25 is recycled to match the length of my.sequence. 
+
+Subscripting with logicals is as simple as providing a vector with values of TRUE (include) or FALSE (exclude) for each element in the vector. For example: 
+```{r}
+my.sequence[my.sequence<25]
+```
+
+The only values returned are those less than 25.
+
+Logical operations can also be done with characters, dates, times etc. For example,
+```{r}
+c("A","B","C")<"B"
+c("A","B","C")=="C"
+```
+
+Factor variables can also be used in equality comparisons but can only be used in order comparisons if the factor is ordered. Attempting to do so with an unordered factor will yield an error:
+```{r}
+# The following is okay
+factor(c("A","B","C"))=="B"
+# But the following would give an error
+ factor(c("A","B","C"))<"B"
+# But will work now because the factor is ordered
+factor(c("A","B","C"),ordered=TRUE)<="B"
+```
+
+Logical operations can also use multiple vectors of logical values with the most common operators being & (and), | (or) and ! (not). The following creates named logical vectors.
+
+```{r}
+less.than.75=my.sequence<75
+greater.than.25=my.sequence>25
+```
+
+Now we can combine those with the "and" (&) or "or" (|) operators. 
+
+```{r}
+less.than.75 & greater.than.25
+!less.than.75 | !greater.than.25
+
+```
+
+Using the above example, we can extract the elements of my.sequence with:
+```{r}
+my.sequence[less.than.75 & greater.than.25]
+my.sequence[!less.than.75 | !greater.than.25]
+```
+
+There are several functions that are useful for logical operations as well including "all" (are all values true), "any" (are any values TRUE) and "%in%" which is a binary equivalent to the match function.
+```{r}
+all(my.sequence<25)
+any(my.sequence<25)
+c("a","1","z")%in%letters
+c("a","1","z")%in%LETTERS
+```
+
+
+### Name Subscripting
+
+The final form of subscripting a vector specifies a set of names of the vector to subset. The names can contain spaces but it is not a wise choice because it makes subscripting with dataframes and lists a tad messier.
+
+```{r}
+my.vector=c(x=1,y=14,z=-32)
+names(my.vector)[2]="my y"
+my.vector[c("my y","x")]
+```
+
+Notice that the subscripts can re-order the values:
+```{r}
+my.vector[c("z","x")]
+```
+ 
+## Matrices
+A matrix is a 2 dimensional collection of vectors, viewed as either row vectors or column vectors, in which all vectors are of the same mode and length.  Matrices are typically used for numerical variables although logical matrices will be useful for subscripting. I've not yet encountered a need for character matrices.
+
+A matrix has 2 dimensions: the number of rows and the number of columns. A matrix can be constructed easily with the "matrix" function or the "diag" function can be used to create a diagonal matrix or modify the diagonal values:
+
+```{r}
+# create a matrix with all values being 1
+my.matrix=matrix(1,nrow=3,ncol=2)
+my.matrix
+# you can use dim to get the row, column dimensions
+dim(my.matrix)
+# or use nrow and ncol
+nrow(my.matrix)
+ncol(my.matrix)
+# you can modify the dimensions as long as the overall size is the same
+dim(my.matrix)=c(2,3)
+my.matrix
+dim(my.matrix)=c(1,6)
+my.matrix
+# use diag to create an identity matrix
+my.matrix=diag(1,nrow=3,ncol=3)
+my.matrix
+diag(my.matrix)=1:3
+my.matrix
+```
+
+Matrices can also be created with the row-binding function "rbind" and the column binding function "cbind" where the vectors being bound into a matrix are either of the same length or the vector can be recycled to the same length:
+```{r}
+# all vectors of the same length
+cbind(1:3,4:6,7:9)
+rbind(1:3,4:6,7:9)
+# values 4 and 5 are recycled to match vector 1:3
+rbind(1:3,4,5)
+```
+
+To illustrate another argument of the matrix function, I'll show how the first and second examples could also be constructed by rows rather than by columns:
+```{r}
+matrix(1:9,nrow=3)
+matrix(1:9,nrow=3,byrow=TRUE)
+```
+
+Linear algebra operations for matrices are available including:matrix/vector multiplication (%*%), transpose with t(x) and inverse with solve(x), etc. However, here I'll focus on subscripting and traditional arithmetic operators, because you'll more likely use those with matrices and there are parallel operations with dataframes. 
+
+### Numeric Subscripting
+
+Subscripting matrices is similar to vectors with the added notion of a null dimension. If we want the element in the ith row and jth column in a matrix x, use x[i,j] and the result is a vector of length 1. However, if we want the entire ith row or the jth column, use x[i,] and x[,j] and leave the other dimension as unspecified (null). When we do that the result is a vector of length ncol(x) and nrow(x), respectively. If we want the result to be a matrix, add "drop=FALSE" as in x[i,,drop=FALSE] to get a 1 by ncol(x) matrix or x[,j,drop=FALSE] to get a nrow(x) by 1 matrix or x[i,j,drop=FALSE] to get a 1 by 1 matrix. Note the need to maintain the commas so the arguments are in their proper positions:
+```{r}
+my.matrix[2,3]
+my.matrix[2,]
+my.matrix[2,,drop=FALSE]
+my.matrix[,3]
+my.matrix[,3,drop=FALSE]
+my.matrix[2,3,drop=FALSE]
+```
+Matrices have the additional form of numeric subscripting in which you can construct a numerical subscript matrix with 2 columns which specify row-column pairs. For example, if I wanted to extract the following i,jth elements: (1,3), (2,1), (3,3) I could do that as follows:
+```{r}
+my.matrix=matrix(1:9,nrow=3,ncol=3)
+indices=cbind(1:3,c(3,1,3))
+indices
+my.matrix[indices]
+```
+
+### Logical Subscripting
+Logical subscripting works similar to vectors except that the result of a logical comparison with a matrix is a matrix of logical values which can then be used to extract the values with the result being a vector. For example,
+```{r}
+my.matrix>0
+my.matrix[my.matrix>0]
+```
+
+This can be useful to assign new values at the locations in the matrix which meet the logical condition:
+```{r}
+my.matrix[my.matrix>0]=-1
+my.matrix
+my.matrix[my.matrix==-1]=3:1
+my.matrix
+```
+
+### Name Subscripting
+As with vectors, names can be used to subscript matrices. Names can be assigned to the rows and columns using the "rownames" and "colnames" functions as shown below using the "paste" function which pastes together character strings:
+```{r}
+rownames(my.matrix)=paste("row",rep(1:nrow(my.matrix)),sep=".")
+colnames(my.matrix)=paste("col",rep(1:ncol(my.matrix)),sep=".")
+my.matrix
+
+``` 
+
+Then the names can be used to subscript the matrix:
+```{r}
+my.matrix["row.2",]
+my.matrix[,"col.3"]
+my.matrix["row.3","col.3"]
+```
+
+
+### Artithmetic Operations
+Arithmetic operations with matrices and vectors are quite simple as long as you understand recycling and how matrices are constructed. We haven't talked about loops yes but an old FORTRAN programmer, like myself, might do the following to add 10 to a 3 by 3 matrix:
+```{r}
+# do 2 i=1,3
+#   do 1 j=1,3
+#     x(i,j)=x(i,j)+10
+#   1 continue
+# 2 continue
+```
+
+It's equivalent in R would be:
+```{r}
+x=diag(1:3,nrow=3,ncol=3)
+for(i in 1:nrow(x))
+for(j in 1:ncol(x))
+ x[i,j]=x[i,j]+10
+x
+```
+
+However, there is no need to approach matrix and vector operations in such a crude manner because R has vectorized operations and values are recycled. The following will work much more efficiently:
+```{r}
+# addition of a scalar
+x=diag(1:3,nrow=3,ncol=3)
+x=x+10
+x
+```
+
+Multiplication by a scalar works similarly.
+```{r}
+# or multiplication by a scalar
+x=x*1.5
+x
+```
+
+If you have two matrices of the same size then you can add(subtract), or multiply(divide) them elementwise. Note this is not matrix multiplication as in linear algebra which uses operator "%*%"
+```{r}
+# or addition of 2 matrices of the same size
+x+x
+# or elementwise multiplication of 2 matrices of the same size
+x*x
+```
+
+When elementwise arithmetic operations are conducted with a vector and matrix, you need to understand that a matrix is actually treated as a vector in which the columns are stacked one after the other. This is consistent with the manner in which matrices are created from vectors by default (byrow=FALSE) where they are entered into the matrix down the first column, then the second column, etc. Thus when a vector is arithmetically combined elementwise, the vector is recycled to match the total size of the matrix (# rows times #columns) and the elements are matched down the columns. If the vector length is not a multiple of the matrix size, a warning will be issued. The following shows some examples with addition and multiplication:
+```{r}
+# addition of a vector and matrix 
+xmat=matrix(1:6,nrow=2,ncol=3)
+xvec=1:3
+xmat+xvec
+# multiplication
+xmat*xvec
+```
+The elementwise order of the operation can be modified to be row-order by using the transpose function "t" which switches the rows and columns of the matrix. The matrix is transposed for the addition or multiplication and then the result is transposed back to the original orientation:
+```{r}
+# addition of a vector and matrix 
+t(t(xmat)+xvec)
+# multiplication
+t(t(xmat)*xvec)
+```
+
+## Arrays
+Arrays provide extensions to allow for 3 or more dimensions but like matrices, they are simply vectors with more than 2 dimensions (dim). For example, we can create a 3-d array as follows:
+```{r}
+my.array=array(1:(3*2*3),dim=c(3,2,3))
+my.array
+```
+
+Just like with matrices, the first index changes first, then the second index,...,final index changes last as apparent in the ordering of the sequential vector. As with matrices names can be assigned to the dimensions:
+```{r}
+dimnames(my.array)=list(paste("x",1:3,sep=""),paste("y",1:2,sep=""),
+                        paste("z",1:3,sep=""))
+my.array
+```
+You can use numeric, logical and name subscripts with arrays as done with matrices:
+```{r}
+my.array[1,2,2:3]
+my.array["x2","y1","z3"]
+my.array[my.array<5]=-1
+my.array
+my.array[cbind(1:2,1:2,2:3)]
+```
+
+## Dataframes
+A dataframe is the typical structure used to store data for analysis. It is similar to a matrix in that it is composed of column vectors which all have the same length (the number of rows in the dataframe). However, the primary difference is that column vectors do not all have to be the same mode. One column can be character, another numeric and another a factor. Dataframes can be treated and converted to a matrix but the conversion coerces all of the vectors to a single common mode (often character).
+
+Here I'll focus on subscripting and manipulating dataframes.I'll use the iris data that accompanies R. First let's look at the mode, class and structure of the iris dataframe.
+```{r}
+data(iris)
+mode(iris)
+class(iris)
+str(iris)
+```
+
+We put the iris dataframe into our workspace with the data function. The mode of iris is a list structure but I'll defer discussion of lists until later. The class is a data.frame and with the str function, we see that it has 150 rows (number of observations) and it has 5 columns (variables). We also see the first 4 variables (columns) are numeric mode and their names are Sepal.Length, Sepal.Width, Petal.Length, and Petal.Width. The final column is a factor variable with 3 levels. If you only wanted to see the names of the variables, you could use names(iris). I'll explain subscripting in detail later but I need to introduce one way to specify a column(variable) in a dataframe. A dataframe is a list and list elements can be specified by name using the $. For example, iris$Species refers to the Species column in iris. 
+ 
+Another useful function to quickly examine dataframes is the summary function. Prior to using it, without explanation, I'll add a character variable Species.Label using the "as.character" function which converts a factor variable to a character using the labels for the levels:
+```{r}
+iris$Species.Label=as.character(iris$Species)
+summary(iris)
+```
+
+We now have a summary of each variable in the dataframe. For numeric variables, we get a range, quartiles, and mean. Note that each of these printed values have limited precision for pretty printing so the true min and max could be slightly different. For factor variables, it prints a table of counts of each factor level and for character variables all we get is a length.
+
+We can construct a tabular count of a character variable (or for any variable) using the "table" function:
+```{r}
+table(iris$Species.Label)
+table(iris$Species)
+table(as.numeric(iris$Species))
+```
+The first two look identical in this case even though the variables are of different modes because the levels of the factor variable are printed. The third makes it clear that the underlying mode of Species is numeric.
+
+### Numeric Subscripting
+As with matrices and vectors, dataframes can also be subscripted with numeric values, names and logicals. Even though column modes can vary, a dataframe is rectangular like a matrix with rows and columns. Thus, numerical subscripting uses the exact same structure as with matrices. We can select subsets of rows, columns or rows and columns. To demonstrate without taking up a lot of space, I'll use the "head" function which shows the first n rows with n=6 as the default. A "tail" function works similarly to show the last n rows.
+```{r}
+# Show data rows 3 through 5
+iris[3:5,]
+# Show columns 3 through 5
+head(iris[,3:5])
+# Show rows 1 through 3 of columns 3 through 5
+iris[1:3,3:5]
+```
+
+Numeric subscripting of columns is fine as long as you don't reorder your columns.  Typically, you'll want to use names because they are more informative and won't change if you reorder columns.
+
+### Name Subscripting
+Dataframes can also be subscripted using names of either rows or columns. The function "names" will show the column (variable) names of dataframes names. For the iris data the row names are character representations of the row number so they are not particularly informative. I'll change the rownames to be a little more informative:
+```{r}
+rownames(iris)=paste("Plant",1:nrow(iris),sep=".")
+head(iris)
+```
+Subscripting based on row names will only be useful if you have assigned a meaningful name to each row (e.g., an animal ID).
+
+If you only want a single column, use the $ extractor as in:
+```{r}
+head(iris$Species)
+```
+
+If you want more than one column by name, you can specify a vector of names to extract:
+```{r}
+head(iris[c("Petal.Length", "Petal.Width", "Species")])
+```
+
+However, if the name of the variable includes spaces (bit of a pain), then you can use a vector of names to extract the variable(s) or a special form of the $ operator:
+```{r}
+# Change last name of iris to Species Label
+names(iris)[6]="Species Label"
+names(iris)
+# iris$Species Label will not work but the following will work
+head(iris$"Species Label" )
+# as well as
+head(iris[,c("Petal.Width","Species Label")])
+```
+
+Extracting columns based on names can be very useful when you compute the name of the variables to extract. For example, if you have many column names that have a similar structure and you can compose the names with "paste":
+```{r}
+# Create dummy data with 200 columns and 5 rows
+my.data.frame=as.data.frame(matrix(1:1000,ncol=200))
+names(my.data.frame)=paste("Measurement",1:200,sep=)
+# Extract measurements 17-20
+my.names=paste("Measurement",17:20,sep=)
+my.data.frame[,my.names]
+# The following will not work:
+# my.data.frame$my.names
+```
+ 
+### Logical Subscripting
+Logical subscripting is certainly one of the most useful for dataframes because it provides a mechanism for subsetting the data based on conditions that you specify (e.g., only females). Once you allow columns to be of different modes, as in a dataframe, logical subscripting of column subsets does not make much sense unless you want to select columns of a particular mode (e.g., numeric). Instead, what we want to subset ae typically rows (observations) based on values in the column(s). For example, if we only wanted to use the iris data for the versicolor species we could extract those rows as follows:
+```{r}
+# iris$Species=="versicolor" creates a vector of logical values
+# which is either TRUE (include the row) or FALSE (exclude the row)
+versicolor=iris[iris$Species=="versicolor",]
+head(versicolor)
+```
+Notice that the logical condition is specified in the row location because that is what we are subsetting and it is followed by a , to indicate we want all of the columns. If we wanted to select versicolor with petals longer than 4.5 we would use:
+```{r}
+versicolor.longpetal=iris[iris$Species=="versicolor"&iris$Petal.Length>4.5,]
+head(versicolor.longpetal)
+```
+Notice that in both cases the row numbers and names are maintained from the original iris dataframe.
+
+Now let's make it slightly more complicated and create the subset of versicolor with long petals and setosa with short petals:
+```{r}
+# To make it more readable create logical subsetting vectors
+versicolor.longpetal=iris$Species=="versicolor"&iris$Petal.Length>4.5
+setosa.shortpetal=iris$Species=="setosa"&iris$Petal.Length<4.5
+mixed=iris[versicolor.longpetal | setosa.shortpetal,]
+table(mixed$Species,mixed$Petal.Length)
+```
+Even with breaking up the statements, they can be difficult to read. An alternative is the "subset" function which enables you to specify a "subset" argument which extracts specific rows and a "select" argument which extracts specific columns. The first example below only extracts rows and all columns are provided by default:
+```{r}
+mixed=subset(iris,subset=(Species=="versicolor"& Petal.Length>4.5)|
+                         (Species=="setosa"    & Petal.Length<4.5) )
+table(mixed$Species,mixed$Petal.Length)
+```
+
+You can also use the "select" argument to specify which columns to select:
+```{r}
+mixed=subset(iris,subset=Species=="versicolor"& Petal.Length>4.5,
+                  select=c("Species","Petal.Length") )
+head(mixed)
+```
+Notice that I selected only 2 columns and I rearranged them with Species first and followed by Petal.Length. You can also use the "select" argument without specifying the "subset" argument value to select specific columns and possibly rearrange them.
+
+
+Before leaving dataframes, I'll also mention the "transform" function which like "subset" function provides a more readable approach that allows you to modify or add columns in a dataframe. For example, if I wanted to add a column which is the log of Petal.Width and scale Petal.Length by multiplying by 100 I could use the $ notation or transform as shown below:
+```{r}
+# Using transform
+new.iris=transform(iris,Petal.Length=Petal.Length*100,
+                        Log.Petal.Width=log(Petal.Width))
+summary(new.iris)
+# Using standard notation
+iris$Petal.Length=iris$Petal.Length*100
+iris$Log.Petal.Width=log(iris$Petal.Width)
+summary(iris)
+```
+The functions "subset" and "transform" are from base R and these concepts have been extended quite substantially in tidyverse with the goal of making code more readable.
+
+One final note about removing a column in a dataframe which can be done by assigning NULL to the column:
+```{r}
+names(iris)
+iris$Log.Petal.Width=NULL
+names(iris)
+```
+
+## Lists
+A list is the most general data structure and it is often used as the value returned by a function when more than one object needs to be returned. Lists have elements that can contain any other R object including another list. A list is a vector with a mode of list. As mentioned previously, dataframes are lists where list elements are columns(variables) in the dataframe and all of the columns have the same length. Typically the columns in a dataframe are one-dimensional atomic vectors but they can be more general (e.g., list with same length as rows in dataframe).
+
+Below I create an example list with the "list" function and show how to use subscripts with a list.
+```{r}
+my.list=list(a.vector=my.vector, a.data.frame=iris, 
+             a.grocery.list=c("bread","milk"))
+str(my.list)
+```
+So the first element in the list is a numeric vector of length 3, the second is a dataframe with 150 rows and 6 columns and the third is a character vector of length 2.
+
+### Numeric Subscripting
+If I wanted to extract a sub-list of the list I use single square braces and the result is a list with 2 elements in this case:
+```{r}
+my.sub.list=my.list[c(1,3)]
+# or I could have used the names as follows
+my.sub.list=my.list[c("a.vector","a.grocery.list")]
+str(my.sub.list)
+is.list(my.sub.list)
+```
+Because a dataframe is a list then you can now realize that I can extract columns from a dataframe with:
+```{r}
+# a matrix approach or
+head(iris[,2:4])
+# or with list extraction
+head(iris[2:4])
+```
+If instead I want to extract a particular element of the list then I use the double square braces which returns a result with the mode of the extracted element. You cannot extract more than one list element with [[]].
+```{r}
+a.vector=my.list[[1]]
+str(a.vector)
+is.list(a.vector)
+```
+
+### Name Subscripting 
+Alternatively, if the list elements are named then I can use the $ operator as shown with dataframes which is equivalent to the square double braces:
+```{r}
+a.data.frame=my.list$a.data.frame
+str(a.data.frame)
+is.list(a.data.frame)
+```
+Note that a dataframe is a list so the call to "is.list" returns TRUE because a.data.frame is a list within my.list.
+
+
+### Logical Subscripting 
+Logical subscripting of a list should be used with the single brackets to extract a subset of the list elements. I'll use the "sapply" function which applies a function to each list element and returns a vector in this case. In this case, I'll apply the function "is.list" which returns TRUE if it is a list and FALSE if it is not a list.
+```{r}
+which_are_lists=sapply(my.list,is.list)
+which_are_lists
+str(my.list[which_are_lists])
+```
+
+#Exercise 2
+1) Create a sequence of odd numbers from -9 to 9 and store it in a vector named odd.
+2) Extract a subset of odd containing positive numbers.
+3) Replace all of the negative values in "odd" vector with NA. Then use table function to calculate the frequency of values. What happened to the NA values. Look at help for table to see how they can included.
+4) Use rep to replicate the above sequence where the entire sequence is repeated twice and then where each number is repeated twice consecutively within the resulting sequence.
+5) Create a identity matrix named "ident" with 6 rows and 6 columns. An identity matrix has 1 for each diagonal element and 0 for off diagonal elements.
+6) Create another diagonal matrix named "mat" with 3 rows and 3 columns and the number 3 on the diagonal. Mutliply ident and mat. Why did you get an error? What happens if you multiply ident and as.vector(mat)? Why do you get that result? What would happen if "mat" had 4 rows and columns? What if it had 6 rows and columns?
+7) Bring the iris data into your workspace with data(iris).  Show that iris is both a list and a dataframe. Hint use the  "is." functions.
+8) Create a list named "mylist" with your vector odd, your matrix ident and the Species column in the iris dataframe. Show the structure of your list. Create a sublist with the first and third elements of your list.  What is the difference between mylist[[3]] and mylist[3]?  What is class of mylist[[3]][[1]] and why?
+
+
+# Entering Data into R
+
+An entire R manual is devoted to import/export of data. Data can be imported from text files that are fixed format, tab delimited, comma delimited or space delimited.  Data can also be imported from database files, spreadsheets, other statistical systems, binary files or directly from the network. I'll cover reading in from text files, an Excel spreadsheet and from an Access database.
+
+## Text Files
+
+The primary function for reading in reasonably sized text files is "read.table" and similar functions "read.csv" or "read.delim" which are specifically setup for comma and tab-delimited files respectively. For very large text files, the "scan" function is recommended. All of the "read." functions are all very similar so I'll use "read.csv" as an example. I'll use the file PEND17forR.xlsx that Barbara Kus provided to me. From Excel, I saved the file as a .csv file (PEND17forR.csv). Reading in the data can be as simple as calling read.csv with the filename specified as long as the file is in the working directory.  If you want to browse for files see ?file.choose and ?choose.files.
+
+```{r}
+pend=read.csv("PEND17forR.csv")
+str(pend)
+```
+
+The function assumes that the first row in the file contains the variable names. There are variable names in the first row of this file.  If the names were not contained in the first row, the argument header=FALSE should be specified and names can be specified with the argument "col.names". Some of variable names in the file (e.g., Body Plumage) contain spaces or other non-usable characters (e.g., ') which are converted to a "." which is more handy than coping with spaces in variable names. If you do not like that behavior change the names prior to importing data. 
+
+All columns are initially read in as character and then converted to a particular type with the function "type.convert" unless you over-ride the behavior with arguments "as.is", "colClasses" and "stringsAsFactors".  If "stringsAsFactors=FALSE" variables identified as character are not converted to factors. 
+
+```{r}
+pend=read.csv("PEND17forR.csv",stringsAsFactors=FALSE)
+pend=read.csv("PEND17forR.csv",as.is=TRUE)
+str(pend)
+```
+
+The same can be done with "as.is=TRUE" which works on any fields not specified in the argument "colClasses" which can be used to specify how the field should be converted. For example, the following specifies that Location, Band.Number and SEX are factor variables and any other character variables should be left as characters rather than converting to factors.
+
+```{r}
+pend=read.csv("PEND17forR.csv",
+              colClasses=c(Location="factor",Band.Number="factor",SEX="factor"),as.is=TRUE)
+str(pend)
+```
+
+If the date field was specified in a different format then we could have specified Date="Date" in "colClasses". However, we can easily convert it to a date with the "as.Date" function.  
+
+```{r}
+pend$Date=as.Date(pend$Date,format="%m/%d/%Y")
+summary(pend$Date)
+```
+As an aside, you can do arithmetic operations with dates such as
+
+```{r}
+pend$Date[1]
+pend$Date[1]+7
+max(pend$Date)-min(pend$Date)
+# class difftime will print as string 
+class(max(pend$Date)-min(pend$Date))
+# change to class numeric
+as.numeric(max(pend$Date)-min(pend$Date))
+```
+
+If you have a lot of work with dates and times, look into the lubridate package.
+
+## Excel Files
+
+Let me qualify this section by saying that I never use Excel files for data in my work and don't have a lot of experience with the various xls packages. But let's bring in the file in its native .xlsx format. There are many different packages that allow reading/writing of Excel files. Here I have used the package readxl which is part of the tidyverse packages. The function is called "read_excel" and it includes an argument "col_types" to specify how the fields should be converted.  If left NULL, then it attempts to work out the best type:
+
+```{r}
+library(readxl)
+suppressWarnings(pend<-read_excel("PEND17forR.xlsx"))
+str(pend)
+```
+
+However,this function has a few flaws which surprises me because typically packages Hadley writes are superb.
+  1) The most notable problem was that it generated a tremendous number of warnings which choked RStudio.  Thus, I had to wrap it in the "suppressWarnings" function.  
+  2) While it is easily correctable by changing the column headers, this function left the names with spaces etc which can be problematic.   
+  3) It mistakenly identified many of the fields like Primary Coverts as numeric even though they contain character values. This can be corrected by specifying the col_types for each variable but it doesn't appear to allow you to do so by name. The warnings would have likely disappeared had I specified column types.
+  4) Finally, another flaw (in my opinion) is that it does not let you specify a factor column type. It only allows blank, numeric, date or text. 
+
+Now I'll demonstrate another package called openxlsx. The function is called "read.xlsx" and it has numerous arguments but the only one we need to set here is "detectDates" so it will convert the Date field for us.
+
+```{r}
+library(openxlsx)
+pend=read.xlsx("PEND17forR.xlsx",detectDates=TRUE)
+str(pend)
+```
+
+Notice that unlike read.csv, all fields other than Date, Wing and Weight were brought in as character variables (chr). Probably much safer than what read_excel did.  However, with read.xlsx there there is no equivalent to the colClasses in read.csv or col_types in read_excel. We can get the equivalent behavior or read.csv by using the "type.convert" function on all of the character fields. for the time being, ignore the structure of this command as I'll come back to it later if I can when I discuss the family of apply functions:
+
+```{r}
+pend[,sapply(pend,is.character)]=lapply(pend[,sapply(pend,is.character)],type.convert)
+str(pend)
+```
+
+If we wanted to keep all of the factor variables as character then we only need to add the as.is=TRUE argument (note: I have to re-read file first):
+```{r}
+pend=read.xlsx("PEND17forR.xlsx",detectDates=TRUE)
+pend[,sapply(pend,is.character)]=lapply(pend[,sapply(pend,is.character)],type.convert,as.is=TRUE)
+str(pend)
+```
+
+## Access Files
+The package RODBC (R for Open Database Connectivity) provides a direct way to read/write/modify databases including Access, Dbase, mysql and numerous others.  It can also be used to connect to Excel files. I'll demonstrate its use to read in part of the "pend" data that has been saved as an Access database (pend.mdb). The package RODBC depends on the ODBC drivers available for your computer.  For Windows machines these include Access and Excel but typically these are 32 bit drivers which means that you have to use 32 bit R to use the package if you have 32 bit ODBC drivers installed. I have found this to be a bit of a nuisance because R64 provides access to a larger amount of memory than R32. But unfortunately I have not found a way to install 64 bit odbc drivers. Also, note that the file I'm using is saved as a .mdb file because I have been unable to get RODBC to work with Windows10 and the newer .accdb format.
+
+After you attach the RODBC package, you must establish a connection with the Access database which is done with "odbcConnectAccess" function for the .mdb format and with "odbcConnectAccess2007" function for .accdb format. The latter has not worked on my Windows10 computer, although it works fine on my older computer with Windows7. Maybe it will work for you.
+
+```{r}
+library(RODBC)
+connection=odbcConnectAccess("pend.mdb")
+```
+
+It is simple as providing the name of the file including directory if it is not in your working directory. However, if you have multiple access and passwords set for the file then they must be provided as arguments as well.
+
+Once you have a connection then you can get a list of tables in the database with:
+```{r}
+sqlTables(connection,tableType="TABLE")
+```
+
+Reading the table into a dataframe is as simple as:
+```{r}
+pend=sqlFetch(connection,"pend")
+head(pend)
+str(pend)
+```
+Text fields are automatically brought in as factor variables but you can use the argument stringsAsFactors=FALSE which is part of ... arguments in "sqlFetch" that is sent to "sqlGetResults" when it is called:
+```{r}
+pend=sqlFetch(connection,"pend",stringsAsFactors=FALSE)
+head(pend)
+str(pend)
+odbcCloseAll()
+```
+
+
+# Basic Plotting/Graphics
+There are various books that cover plotting and graphics in R. The most capable package is ggplot2 and it is covered in the Data Science book I mentioned previously. I don't have time to cover much on plotting and graphics but will describe a few basic topics. 
+The fundamental plotting function is called plot which is a generic function that operates on the following classes:
+```{r}
+methods("plot")
+```
+Let's examine the help for plot. As you'll see there is some information for a scatter plot but if you want to see more detailed information look at the help for plot.default which is used for scatterplots. 
+
+As an example, let's create a scatterplot using Wing and Weight from the pend dataframe. I'll demonstrate the "with" function which allows you to specify a dataframe or subset as shown here and then use variable names without qualifying with the dataframe name. Below I use a subset with 2 species and require both Wing and Weight values to be greater than 0.  Plot will automatically exclude NA values.
+```{r}
+these.species= pend$Species %in% c("WREN","YBCH")
+table(these.species)
+these.notzero=pend$Wing>0 & pend$Weight>0 
+table(these.notzero)
+these.notna= !is.na(pend$Weight) &!is.na(pend$Wing) 
+table(these.notna)
+these=these.species&these.notzero&these.notna
+table(these,useNA="ifany")
+table(these.species,these.notzero,useNA="always")
+df=pend[these,]
+dim(df)
+with(df,plot(Wing,Weight))
+plot(df$Wing,df$Weight)
+```
+
+Hmm! Looks like there may be some errors or outliers in the data.  One of these birds appears to be too heavy to fly, another appears that it had its wings clipped and another appears to be very skinny for its wing length. Regardless, let's clean up the plot with a little trickery by setting plot limits.
+```{r}
+#df=pend[pend$Wing>0&pend$Weight>0&pend$Species%in%c("WREN","YBCH"),]
+
+with(df,
+     plot(Wing,Weight,xlim=c(45,95),ylim=c(0,50))
+)
+     
+```
+
+Okay, that looks better. Now let's add some better labels.
+```{r}
+with(df,plot(Wing,Weight,xlim=c(45,95),ylim=c(0,50),xlab="Wing Length (mm)",ylab="Bird Weight (g)"))
+```
+
+Now we can't really tell which species is represented by the symbols so we can use different symbols and/or colors. The arguments to set these values are not specific to the plot function but are contained in the ... because they are actually arguments to the "par" function which allows you to specify a large set of values to determine the way plots are produced. 
+
+Let's use two different colors and symbols to represent the two species.  These arguments are specified with a vector that matches the length of the data. To specify that, I'll demonstrate using the "with" function that can be used with multiple statements. I'll also introduce the "ifelse" function. The "ifelse" function uses a vector of logical values and returns the first value if TRUE and the second value if FALSE. The result is a vector that is the same length as the logical vector with the specified values.
+
+```{r}
+with(df,
+{
+  species.color=ifelse(Species=="WREN","Purple","Orange")
+  species.symbol=ifelse(Species=="WREN",1,2)
+  plot(Wing,Weight,xlim=c(45,95),ylim=c(0,50),col=species.color,pch=species.symbol,xlab="Wing Length (mm)",ylab="Bird Weight (g)")
+})
+```
+
+This shows that some of the YBCH values are mixed in with the WREN values.
+
+See the help for the par function to learn of the various plotting attributes you can control. For example, "cex", "cex.lab" are often useful to control the size of labels and plotting characters. But before I leave plotting I'll demonstrate two more that control the basic form of the plot. The first is "bty" which controls the look of the plot box. Here are two alternate forms:
+```{r}
+with(df,
+{
+  species.color=ifelse(Species=="WREN","Purple","Orange")
+  species.symbol=ifelse(Species=="WREN",1,2)
+  plot(Wing,Weight,xlim=c(45,95),ylim=c(0,50),col=species.color,pch=species.symbol,bty="l")
+})
+```
+
+
+```{r}
+with(df,
+{
+  species.color=ifelse(Species=="WREN","Purple","Orange")
+  species.symbol=ifelse(Species=="WREN",1,2)
+  plot(Wing,Weight,xlim=c(45,95),ylim=c(0,50),col=species.color,pch=species.symbol,bty="n")
+})
+```
+
+Finally, I'll demonstrate how you can display multiple plots in the same figure/plotting area. For a more general approach see the function "layout".
+
+```{r}
+# call par and define the plotting region to have 1 of plots with two columns
+par(mfrow=c(1,2),cex.lab=2,bty="l",family="mono")
+with(df[df$Species=="WREN",],
+  plot(Wing,Weight,xlim=c(45,95),ylim=c(0,50),col="Purple",pch=1))
+with(df[df$Species=="YBCH",],
+  plot(Wing,Weight,xlim=c(45,95),ylim=c(0,50),col="Orange",pch=2))
+```
+
+# Writing Functions
+
+Even though I've suggested that you work with R interactively, eventually you'll want to save your commands as a script or preferably as a notebook in RStudio, as done here. Scripts and notebooks are great but if you ever find yourself replicating code in your script or modifying a handful of values and re-running it, then you should be thinking about learning how to write functions. 
+
+If your task is very unique then march ahead. But if it is not, do yourself a favor and poke around the 1000s of packages using a search engine or the CRAN Task Views to see if a function has already been written for your application. With a little time spent searching, you may save yourself a lot of time coding and debugging.
+
+Regardless, it is useful to know how to write functions. They will be useful with the family of apply functions that I'll describe later. Also, for other functions like optim or integrate, the primary argument that you pass is the name of a function that you write which is minimized or integrated, respectively.
+
+To write a function all you need to do is to create a function name (if saved), define its arguments and it's return value(s) and write the code that performs whatever task you need. The general format is:
+
+my.function=function(arguments separated by commas)
+{
+your R code
+return(your value)
+}
+
+Instead of using the return function, you can make the last line of the function be the object to be returned.
+
+RStudio makes function creation a snap. Below is a simple example in which I have 2 lines of code. The first takes the argument x and multiplies by 2, assigns it to y and then prints y. If you highlight that piece of code and then press, CTRL+ALT+X (see RStudio Code menu item) it will turn the code into a function after you provide a name for the function. I used the name "doubleit"
+
+```{r,eval=FALSE}
+  test <- function(x) {
+    y=2*x
+    y
+  }
+```
+
+
+```{r}
+doubleit <- function(x) {
+  y=2*x
+  return(y)
+}
+```
+
+RStudio examined the code and found any variables not assigned a value in the code (not on the left side of assignment) and specified them as arguments in parentheses. Then it added braces for the body of the function with the code inside of the braces. The braces {} are only needed if there is more than one statement in the function (e.g., sumit=function(x)sum(x>0) is a valid function definition). Note that I found that if I highlighted both lines complete, I got an error that said RStudio only can create a function from an R chunk, I found that if I only highlighted up to the end of the last line (after y), then it worked properly.
+
+Now, I had the last statement print the value of y which ends up being the last line in the function which will then be the value returned by the function. RStudio can't guess what you want to return or the order you want for arguments, so you it only provides a starting point and then you can edit the function to suit your needs. Below, is an example with a single line of code:
+
+```{r,eval=FALSE}
+  mult <- function(multiplier, x) {
+    y=multiplier*x
+  }
+```
+
+It identified that both multiplier and x were not define and added them as arguments in that order.  
+```{r}
+  multiplyit <- function(multiplier, x) {
+    y=multiplier*x
+    return(y)
+  }
+
+multiplyit(5,2)
+multiplyit(10,30)
+```
+
+Notice that when I used the function nothing happened.  This is a starting point.  I need to add a return value and maybe I should add a default value for the multiplier and re-order the arguments as follows:
+
+```{r}
+  multiplyit <- function(x,multiplier=2) {
+    y=multiplier*x
+    return(y)
+  }
+
+multiplyit(5)
+```
+Now the function returns 10 when I assign x=5 and use the default multiplier value of 2.
+
+Function arguments are passed by value which means a copy of the object is passed. Thus, any changes you make to the copy in the function are not made to the original object in your workspace. If you wanted to modify an object in the workspace, you would need to return the new object as the return value of the function and then assign the result to the original object.
+
+
+```{r}
+  multiplyit <- function(x,multiplier=2) {
+    multiplier=multiplier^2
+    y=multiplier*x
+    return(y)
+  }
+
+multiplier=5
+multiplyit(5,multiplier=multiplier)
+multiplier
+```
+
+## Variable Scoping
+I'll discuss what objects are available to a function and which are not. This is called scoping. R uses lexical scoping which means that the scope of the variable depends on where a function was defined.  Other programming languages use dynamic scoping which means that the scope of the variable depends on where the function was called. The easiest way to understand this is with some examples.  
+
+Below, I modify the above example to show that a function defined in the workspace will use values for variables that are in the workspace if they are not defined as arguments. Unfortunately this can lead to some nasty bugs that are hard to track down. I defined a variable in my workspace spelled "multplier" and then made the typo in my function to use "multplier" rather than the argument "multiplier".
+
+```{r}
+  multplier=2
+  multiplyit <- function(x,multiplier=2) {
+    y=multplier*x
+    return(y)
+  }
+
+constant=5
+multiplyit(5,multiplier=constant)
+```
+Instead of multiplying by 5 as I expected it multiplied by 2 because it used the variable "multplier" defined in my workspace rather than the argument "multiplier" that I specified. This problem can be alleviated by always running your script or any analyses in an empty workspace (use rm(list=ls()) at the beginning of the script/notebook. But that isn't always desirable if the results of your analysis take a long time to create but you can always test your code in an empty workspace and any undefined variables will be identified because they won't be found in your workspace. 
+
+The flip side to lexical scoping is that if the variable is defined in your workspace then you don't need to specify it as an argument. Also, even if there is an argument or variable with the same name in your workspace, the values in your function will be used. It only looks in the workspace if it can't find it inside the function. Here I correct the error and show that it uses the value 5 instead of 2.
+```{r}
+  multiplyit <- function(x,multiplier=2) {
+    y=multiplier*x
+    return(y)
+  }
+
+multiplier=2
+constant=5
+multiplyit(5,multiplier=constant)
+```
+
+Lexical scoping appears more complicated when a function is defined inside of a function but the same rules apply. Below I define a function myf1 which contains the definition of another function myf2. Each of these functions simply prints out the value of a variable y. The variable y=1 is defined in the same environment that myf1 is defined. In myf1, myf2 is called and the value y=1 is printed and then y is assigned 2 and myf2 is called again and it prints y=2. Then upon completing the call to myf1, y is printed again and its value is still 1. The same would have been true if y was an argument to myf1 because arguments are passed by value and cannot be changed in the function.
+
+The only exception is the use of the <<- assignment operator which will change the value globally. The use of that assignment operator is not recommended. Thus, without being specified as an argument, functions can use values of variables from the environment in which they are called. This can be a benefit when using functions like myf2 defined within myf1 but it can be dangerous in cases where say you intended to type y2 in a function, but type y and it uses a value from the environment instead of one you have as a defined argument.
+```{r}
+y=1
+myf1=function()
+{    
+   myf2=function()    
+   {       
+      cat("y=",y,"\n")      
+      invisible()    
+   }
+   cat("\ny=",y,"\n")
+   myf2()    
+   y=2    
+   myf2()    
+   invisible()   
+}
+myf1()
+cat("\ny=",y)
+```
+
+I'll show one more example, in which I define another function myf2 which sets y=3 and then calls myf1. Note that this myf2 does not interfere with the other myf2 defined inside myf1 because it is local to myf1. If R used dynamic scoping, then you would expect to see 3,3,2 printed but in fact you get the same result as above because myf1 was defined in the environment with y=1 and being called from myf2 where y was set to 3 does not affect the environment from which myf1 was defined. 
+```{r}
+myf2=function() 
+{   
+   y=3   
+   myf1()   
+   invisible() 
+}
+myf2()
+```
+
+## Programming Constructs (Loops/conditional statements)
+Once you know R syntax, you can program an algorithm in R by converting your task into a sequence of statements to complete the task. Note that converting tasks into algorithms can be difficult for many people who are not good at problem solving (remember word problems in elementary school). Unfortunately, this is something that I can't really teach here. If you are new to programming and algorithm development you can find books available on the subject or take an Introductory Programming course.  A good introduction can be found here (https://www.khanacademy.org/computing/computer-science/algorithms/intro-to-algorithms/v/what-are-algorithms). 
+
+What I can teach you is the constructs used to control the flow in the code for algorithms. These include commands that control the flow of the code based on conditions that occur (if/else) and loops that allow you to repeat certain actions for a specific number of times or for a specific set of values or until a condition is met. 
+
+### Conditional Flow Control
+In developing code it is often necssary to run code only when certain conditions are met.  A simple example is avoidance of an undefined numerical operation like divide by 0.  The format is:
+
+if(condition){
+
+ code to be run if condition is TRUE
+ 
+} else {
+
+ code to be run if condition is FALSE
+ 
+}
+
+"condition" is a logical operation like x==0. The braces are only needed if you have more than one line of code to be executed. The "else" portion can be dropped if you only want to run code when the condition is TRUE.
+
+The following code uses the if/else construct to compute a ratio but only if the value is not 0. In that case it returns Inf (note: that R already does this). 
+```{r}
+x=1
+if(all(x!=0))
+{
+  y=12/x
+} else {
+  y=Inf
+}
+y
+```
+```{r}
+x=0
+if(x!=0)
+{
+  y=12/x
+} else {
+  y=Inf
+}
+y
+
+```
+I won't provide an example, but you can nest an if/else construct inside of another if/else. It might look something like the following.  
+
+if(condition1){
+
+   if(condition2){
+
+    code to be run if condition1 and condition2 are TRUE
+ 
+   } else {
+
+    code to be run if condition2 is FALSE but condition1 is TRUE
+ 
+   }
+
+ 
+} else {
+
+  code to be run if condition1 is FALSE
+ 
+}
+
+The nested if/else could have been in the else portion of the outer if/else or you could have nested an if/else in both sections. Nesting is not limited to 2 levels but too much nesting can lead to code that is difficult to read. 
+
+The "switch" function can be useful for flow control when you need more than 2 conditions. For example, if you wanted to write a differnt section of code that was specific to a set of more than 2 species values. See ?switch.
+
+For simple forms of assignment based on a logical condition applied to a vector, the ifelse function provides a shorthand version of the if/else construct.  Following on the prior example, let's say I had a vector of numeric values that I wanted as the divisors but I wanted to dividing by 0. Then I could use the ifelse function to return a vector of values that has the same length as the original vector used for the logical condition.  Below is a simple example:
+```{r}
+x=c(2,0,3,0)
+y=ifelse(x!=0,12/x,Inf)
+y
+```
+
+You have to be careful if you return values that are of different types for the yes and no portions. For example:
+```{r}
+y=ifelse(x!=0,12/x,"Bummer Dude")
+y
+```
+Clearly you have to end up with a vector of strings because "Bummer Dude" is not numeric.
+
+A more useful example might be to replace NA with some value that you would like to use, or replace a blank value with NA. The following is an example using the pend dataframe from above:
+```{r}
+summary(pend$Wing)
+pend$Wing=ifelse(pend$Wing==0,NA,pend$Wing)
+summary(pend$Wing)
+```
+
+Even the above is not a particularly good example because the original value is returned for the "no" portion which can be more efficiently done with pend$Wing[pend$Wing==0]=NA. Quite often there is more than one way that a task can be accomplished. Do what works for you!
+
+
+### Loops
+Any time you want to perform some code over a set of objects, or for a specific number of times, or until a certain condition is met, then you should be using a loop. There are 3 types of loops in R: 1) for, 2) while, and 3) repeat.  Along with the loops you can use "break" to exit from a loop and "next" to skip to the next looping index.  There is no reason to use a loop for a function that is vectorized (i.e., works on entire vector at once) but they make simple examples.
+
+The sqrt function is vectorized (i.e., sqrt(x) produces result directly for each value in x) but here I'll use it to demonstrate a simple "for" loop and different ways to construct it. I'll want to store the result in another vector which must be created first to use it.  There are 2 ways to create the vector. The first is to assign NULL to the vector object name. Below is some code that uses the "for" loop in this fashion:
+```{r}
+my_square_roots=NULL
+x=c(1,4,9,16)
+for(value in x)
+  my_square_roots=c(my_square_roots,sqrt(value))
+my_square_roots
+```
+
+Something like that approach for a non-vectorized operation would be fine unless there was a large number of elements in x because it is inefficient to "grow" the vector "my_square_roots" when you know how long it should be. A better approach would be:
+```{r}
+my_square_roots=vector("numeric",length=length(x))
+for(i in 1:length(x))
+  my_square_roots[i]=sqrt(x[i])
+my_square_roots
+```
+
+The vector function defines a vector with mode specified by the first argument and length, the second argument. It can also be used to define an empty list of some length as shown below:
+```{r}
+my_square_roots=vector("list",length=length(x))
+for(i in 1:length(x))
+  my_square_roots[[i]]=sqrt(x[i])
+my_square_roots
+```
+Now the result is in a list of length 4 and each element contains a numeric vector of length 1 with the square root. 
+
+In summary, you can use a "for" loop over the values in a vector which can be an index into some other data structure (e.g., vector, dataframe or list) or can simply be a way to loop a specific number of times (e.g., for (i in 1:10)).
+```{r}
+data("iris")
+sample.means=vector("numeric",length=1000)
+for(i in 1:1000)
+ {
+    index=sample(1:nrow(iris),nrow(iris),replace=TRUE)
+    sample.means[i]=mean(iris$Sepal.Length[index])
+}
+mean(sample.means)
+mean(iris$Sepal.Length)
+sd(sample.means)
+sqrt(var(iris$Sepal.Length)/nrow(iris))
+```
+
+I haven't found much use for it but I'll use the above example to show how ""repeat"" works because it demonstrates the use of "break".
+
+```{r}
+my_square_roots=vector("numeric",length=length(x))
+i=1
+repeat {
+  my_square_roots[i]=sqrt(x[i])
+  i=i+1
+  if(i>length(x)) break
+}
+my_square_roots
+```
+
+Finally, I'll show the same example using the "while" structure which will loop until a certain condition is met.
+```{r}
+my_square_roots=vector("numeric",length=length(x))
+i=1
+while(i <= length(x)) {
+  my_square_roots[i]=sqrt(x[i])
+  i=i+1
+}
+my_square_roots
+```
+If your expression for ending the while loop is rather involved or the logical condition isn't defined prior to the loop, you can use an infinite loop with while(1==1){} and then include in the code a "quit" when you want to jump out of the loop.
+
+Finally, I'll demonstrate use of "next" with an example in which I only return the square roots of positive numbers. In this case I could have left off the "else" portion but if there was more code following the if/else "next" allows you to skip over it and go to next value in x.
+```{r}
+my_square_roots=NULL
+x=c(1,4,-9,16)
+for(value in x)
+{
+  if(value>0)
+     my_square_roots=c(my_square_roots,sqrt(value))
+  else
+     next
+}
+my_square_roots
+```
+
+As with if/else flow controls, you can nest loops within each other. To demonstrate, I'll come back to the matrix example shown earlier. To loop over each value in the matrix, we loop over each row (i) and within the row we loop over each column (j) and then add 10 to element x[i,j in the ith row and jth column:
+```{r}
+x=diag(1:3,nrow=3,ncol=3)
+for(i in 1:nrow(x))
+{
+   x[i,]=x[i,]*2
+   for(j in 1:ncol(x))
+   {
+    x[i,j]=x[i,j]+10
+   }
+}
+x
+```
+
+
+## Avoiding Loops in R Using Apply Family
+R was designed as an interactive environment and the R language is interpreted rather than compiled as in FORTRAN or C; although many of the primitive functions like mean  use compiled code. You may hear complaints from various people that they tried R and thought it was much too slow for their particular application. Sometimes this occurs because programmers approach R and attempt to use it like they would with FORTRAN or C. Often this involves looping which means repeatedly conducting some set of calculations while possibly changing some index to work on different values of the data. You can use looping constructs in R programming but they can be slower in some circumstances. In earlier versions of R looping was extremely slow in comparison to alternatives like the apply family of functions but that is no longer the case. Thus, you should do what works for you. If a loop construct is not too slow and you can't work out how to use the apply functions then use loops.  In some cases, no matter what you do it is possible that R may simply be too slow for what you want to accomplish. However, that does not mean that you need to abandon R for a compiled language. If you can program in C or FORTRAN then you can write compiled code in one of those languages and use it from R for your specific circumstance for the parts of your code that are slow.
+ 
+I'm not going to discuss that aspect here but I will describe the apply family of functions and how you can think of them in terms of looping. The apply family of functions usually provides an improvement in speed but more importantly they are a concise approach to specifying loops. Once you understand them you are unlikely to go back to loops.
+
+The apply family of functions applies a user-specified function over the elements of the primary argument. The various apply functions differ based on the mode of the primary argument and the values they return. The family includes: apply, sapply, lapply, tapply, mapply, rapply and others. If you want to loop over a matrix or array, you'll use apply.  If you want to loop over a vector or list (remember that lists are vectors), use lapply if you want the result to be a list or use sapply if you want the result to be converted to a vector or matrix, as appropriate. If you want to loop over an atomic vector (e.g., numeric vector) split by some category, use tapply to return either an array or a list depending on the function. The function mapply is a multivariate version of sapply in which any number of vectors can be supplied as arguments and rapply is a recursive version of lapply.
+
+### Apply
+I'll start with "apply" because I think it is the easiest to demonstrate and to understand. I'll start with a matrix which has 2 dimensions with the rows being dimension 1 and the columns dimension 2. These are referred to as margins. For example, if I want to know the sum of the elements in each row of the matrix, I could write that with the following loop:
+```{r}
+# define a matrix to use
+my.matrix=matrix(1:12,nrow=3,ncol=4)
+# pre-allocate a vector to contain the row sums; using nrow(my.matrix) 
+# as the length of the vector is good practice because it makes it 
+# easy to generalize the code for a function 
+my.row.sums=vector("numeric",nrow(my.matrix))
+# Loop over the rows and sum the elements in the row
+for(i in 1:nrow(my.matrix))
+  my.row.sums[i]=sum(my.matrix[i,])
+my.row.sums
+# The above will be faster than the following because it uses the 
+# vectorized sum function which sums all the elements in a vector;
+# An old FORTRAN programmer might have the tendency
+# to do the following.
+#  This is not advised.
+for(i in 1:nrow(my.matrix))
+{
+  my.row.sums[i]=0
+  for (j in 1:ncol(my.matrix))
+    my.row.sums[i]=my.row.sums[i]+my.matrix[i,j]
+}
+my.row.sums
+```
+With "apply" we can accomplish the same task with:
+```{r}
+# The first agument is the object to be used
+# The second argument is the margin
+# The third argument is the function to be applied
+my.matrix
+apply(my.matrix,1,sum)
+```
+To demonstrate the use of ... discussed earlier I'll add a missing value (NA) to the matrix and demonstrate how the argument na.rm is passed to sum.
+```{r}
+# Replace element 2,3 with an NA
+my.matrix[2,3]=NA
+# See how sum of second row is now NA
+apply(my.matrix,1,sum)
+# Use na.rm=TRUE to remove(ignore) NA values in computing the sum
+apply(my.matrix,1,sum,na.rm=TRUE)
+```
+Any argument=value pairings given at the end of the function call are passed to the function you specified (sum in this example) using the ... notation in apply. If I wanted to compute the means of each column, then the looping and equivalent "apply" code would be written as:
+```{r}
+# pre-allocate a vector to contain the coumn means sums
+my.col.means=vector("numeric",ncol(my.matrix))
+# Loop over the columns and compute mean of values in the column and ignore NA
+for(i in 1:ncol(my.matrix))
+  my.col.means[i]=mean(my.matrix[,i],na.rm=TRUE)
+my.col.means
+# now use apply
+apply(my.matrix,2,mean,na.rm=TRUE)
+```
+I've used fairly simple examples to keep the focus on the equivalence between loops and apply, but you should know that for these simple common cases, there are primitive functions rowSums, colSums, rowMeans, and colMeans which you can use directly to a matrix. Also, remember that most operations in R are vectorized so sum(my.matrix) and mean(my.matrix) will produce the sum and mean of all elements in the matrix.
+
+Now let's consider a more complicated situation with margins using a 3 dimensional array.  We'll use my.array defined earlier and we'll compute the mean of subsets across the margins. Let's say that we want to compute the mean across the values in the 3rd  dimension for each of the first 2 dimensions. 
+```{r}
+apply(my.array,c(1,2),mean)
+# if we switch the order of the margins then the result is transposed
+# and is equivalent to t(apply(my.array,c(1,2),mean))
+#
+apply(my.array,c(2,1),mean)
+```
+Now if we wanted the same quantity across elements in the first and third dimension, we would use the following to return a vector:
+```{r}
+sqrt(apply(my.array,c(2),mean))
+```
+The margins that are excluded are used in the computation for the dimensions that are specified. It is important to understand what the function does with the object that you give you are passing as part of the apply process. Instead of the mean, let's consider computing the standard deviation using the square root of the variance (var) function.
+```{r}
+# Note that sqrt is working on a matrix and computing elementwise 
+# square roots; in this case.
+sqrt(apply(my.array,c(1,2),var))
+# Now if we want to compute the variance of all the elements in 
+# dimensions 1 and 3 for each
+# entry in the second dimenstion then we might try the following:
+#
+sqrt(apply(my.array,c(2),var))
+```
+You were probably expecting a vector with 2 values for the second dimension. However, what you are passing to "var" is a matrix and if you pass a single matrix to "var", it will call "cov" and compute the covariance matrix between the rows and columns of the matrix and the result above is the result of turning each of the 3 by 3 covariance matrices into a vector (9 rows) and then displaying the matrix with 2 columns. To see that is the case, try sqrt(var(my.array[,2,])) to see that it corresponds to the second column when the matrix is converted to a vector (columnwise). That is certainly not we had in mind and the result using the sd (standard deviation) function also will not do what we want.
+
+So this provides an opportunity to show how you can write your own function to be applied. Below I create a simple function that will compute the standard deviation of a vector or matrix after converting the argument to a vector. Then I apply it to various sets of margins.
+```{r}
+# create the function and use ... so any arguments to sd can be passed along
+my.sd=function(x,...)
+ sd(as.vector(x),...)
+apply(my.array,2,my.sd)
+# replace a value with NA and show how to use na.rm=TRUE
+my.array[2,2,2]=NA
+apply(my.array,2,my.sd)
+apply(my.array,2,my.sd,na.rm=TRUE)
+# if I was only going to use the function once, it could be defined 
+# inside the body of the function.  Here I purposefully make this 
+# one line function into 2 lines to show that this is not limited 
+# to one line functions.  Note that the function is not named.
+#
+apply(my.array,c(1,2),
+     function(x,...)
+       {
+         x=as.vector(x)
+         sd(x,...)
+       },
+     na.rm=TRUE)
+```
+
+### Lapply and Sapply
+If you want to loop over a vector either atomic or a list, then you'll want to use "lapply" if you want the result to be a list or use "sapply" if the result of the function can be simplified to a vector or a matrix. I'll carry-on using the mean example with the
+iris dataframe (also a list) to see the parallel with "apply". I'll use the first 4 numeric fields in iris and show the differences in results for "lapply" and "sapply" on this list.
+```{r}
+# get iris data and create new.iris with first 4 columns
+#
+data(iris)
+new.iris=iris[,1:4]
+# sapply loops over the list elements which are the columns in 
+# a dataframe. Because mean returns a single value, sapply returns a vector
+#
+sapply(new.iris,mean)
+# It is equivalent to the following loop; note use of the [[]] 
+# to extract a vector rather than using [] to get a list with one element.
+#
+my.iris.means=vector("numeric",ncol(new.iris))
+for (i in 1:ncol(new.iris))
+  my.iris.means[i]=mean(new.iris[[i]])
+# If I want to add the names of each column I could do that with  
+#
+names(my.iris.means)=names(new.iris)
+my.iris.means
+```
+
+Now if I do the same thing with "lapply", I get a list instead of a vector because "lapply" always returns a list without trying to simplify the list:
+```{r}
+lapply(new.iris,mean)
+# lapply is equivalent to the following loop
+#
+my.iris.means=vector("list",ncol(new.iris))
+for (i in 1:ncol(new.iris))
+  my.iris.means[[i]]=mean(new.iris[[i]])
+my.iris.means
+# If I want to add the names of each column I could do that with  
+#
+names(my.iris.means)=names(new.iris)
+my.iris.means
+# Note that both of these examples would not be used in practice
+# because mean is a generic function with a useful version for dataframes
+mean(new.iris)
+```
+
+So let's move away from means and consider an example where you want to compute a correlation matrix of all the numeric measurements (first 4 columns) separately for each species. The result will be a matrix so we'll probably want to use 
+"lapply" because "sapply" would combine all the matrices and we would have to split them up by species:
+```{r}
+# create a list with 3 dataframes for each of the 3 species
+#
+my.split.df=split(iris,iris$Species)
+# Now use lapply to construct a list of correlation matrices
+# but only using the first 4 columns
+#
+species.cor=lapply(my.split.df, function(x) cor(x[1:4]))
+species.cor
+```
+Now what if we wanted to get for each species the maximum positive correlation while excluding the diagonal using the "lower.tri" function to provide acceptable indices within the matrix. We can use sapply on the list of matrices:
+```{r}
+sapply(species.cor, function(x) max(x[lower.tri(x)]) )
+```
+That is possibly useful but I don't know which variables have the maximum correlation. I can expand the above code and extract the row and column names of the variables with the maximum correlation. I use the "which" function to get the indices (arr.ind=TRUE) of the matrix elements (possibly more than one) with the maximum correlation. With the row and column index, I can extract the row and column names and return a dataframe and "lapply" will return a list of dataframes.
+```{r}
+# This function is rather involved so define it and then use it
+# This is useful if you get an error and then want to use
+# debug(my.function) to step through the function to locate the error
+#
+max.cor=function(x)
+{
+   max.corr=max(x[lower.tri(x)])
+   max.indices=which(x==max.corr&lower.tri(x),arr.ind=TRUE)
+   var1=row.names(x)[max.indices[,1]]  
+   var2=colnames(x)[max.indices[,2]]
+   data.frame(Var1=var1,Var2=var2,max.corr=max.corr)      
+}
+max.cor.df=lapply(species.cor,max.cor)
+max.cor.df
+```
+
+I could have used "sapply" but with a mix of characters and numeric it would have coerced a return  vector to a character matrix. If I want to end up with a single dataframe rather than a list of dataframes, I can use the "do.call" function which uses a named function ("rbind" in this case) with all the elements in the list:
+```{r}
+do.call("rbind",max.cor.df)
+```
+To use a function with  "lapply"  or "sapply", it is the first argument of the named function that is varied for each call. What if we wanted construct a linear regression of petal width versus petal length separately for each species. For "lm", the first argument is the formula and it is the data that we want to vary for each regression. To accomplish a task like that we can use either "sapply" or "lapply" across an integer sequence which indexes the subsets. In this case, the parallel with a loop construct is very obvious. Both "sapply" and "lapply" work with lists and a useful function called "split" can create a list of dataframes based on one or more factors. For our example, we want to split the iris data by species and with each of the dataframes conduct a linear regression of petal width versus length. The following shows how that can be done with "lapply" where the model is returned and with "sapply" where only the coefficients of the regression are returned and I want a matrix of results. In each case, I show how the same thing can be done with a loop. In this case, a loop construct is very clear because of the way the "lm" function is structured.
+ :
+```{r}
+# First I'll create a user-defined function which calls lm
+# and pass it an index (.element) and a formula
+#
+my.lm=function(.element,formula)
+        lm(formula=formula,data=my.split.df[[.element]])
+# lapply and sapply:
+# Next I'll call lapply to create a list of models (one for each subset)
+#
+my.species.models=lapply(1:length(my.split.df),my.lm,
+                              formula=Petal.Width~Petal.Length)
+# Next I'll use sapply to extract the coefficients
+# and add the species names to the rows after transposing
+#
+my.species.coefficients=sapply(my.species.models,coef)              
+my.species.coefficients=t(my.species.coefficients)
+row.names(my.species.coefficients)=names(my.split.df)
+my.species.coefficients
+# Loop equivalent:
+# I could do the same thing with the following looping code
+#
+my.species.models=vector("list",length(my.split.df))
+for (.element in 1:length(my.split.df))
+  my.species.models[[.element]]=
+          lm(Petal.Width~Petal.Length,data=my.split.df[[.element]])
+my.species.coefficients=matrix(NA,nrow=length(my.split.df),ncol=2)
+for (.element in 1:length(my.split.df))
+  my.species.coefficients[.element,]=
+          coef(my.species.models[[.element]])
+row.names(my.species.coefficients)=names(my.split.df)
+colnames(my.species.coefficients)=names(coef(my.species.models[[1]]))
+my.species.coefficients
+```
+
+### Tapply
+If you only need to operate on a single atomic object (e.g., numeric vector),that is split into groups by one or more grouping variables (typically factors) then "tapply" is what you should use. Below are some examples using the iris data:
+```{r}
+# Compute the mean Sepal.Width for each species
+#
+result1=with(iris,tapply(Sepal.Width,Species,mean))
+result1
+str(result1)
+# Compute the mean ratio Sepal.Width/Sepal.Length for each species 
+# and breaks in Petal.Length
+#
+iris=transform(iris,Petal.Length.categories=cut(Petal.Length,breaks=0:6+0.5))
+result2=with(iris,
+  tapply(Sepal.Width/Sepal.Length,list(Species,Petal.Length.categories),mean))
+result2
+str(result2)
+# Compute the median Sepal.Width for each species and breaks in 
+# Sepal.Length and Petal.Length
+#
+iris=transform(iris,Sepal.Length.categories=cut(Sepal.Length,breaks=4:8))
+result3=with(iris,
+  tapply(Sepal.Width,
+     list(Species,Petal.Length.categories,Sepal.Length.categories),median))
+result3
+str(result3)
+```
+In each case, the function returned a single value and the result was a vector for a single factor variable, a matrix for two factor variables and a 3 dimensional array for 3 categorical variables. If the function does not return a single value then "tapply" will typically return a list.
+```{r}
+result4= with(iris,tapply(Sepal.Width,Species,cut,breaks=c(-Inf,.5,1.5,3.5,Inf)))
+result4
+mode(result4)
+```
+
+#Exercise 3
+1) Read help for ?DateTimeClasses and ?as.POSIXlt, then use them with pend$Date to get a tally of the number of records in pend for each year.
+2) Write a function that accepts a field name in the pend data and returns a table of values in that field. Make sure to check that the field name is valid (%in% names(pend)). Use name subscripting.
+3) Extend your function such that it works on any dataframe and accepts a vector of field names and returns a list with the tabled values for each field name. Obviously this will involve a loop over the field names.
+
+# R Formulas and Linear Models
+Normal linear models and generalized linear models provide a broad class of statistical models to explain a dependent variable from one or more independent variables. These classes include many of the topics you may have learned in your statistics classes including simple and multiple linear regression, ANOVA and ANCOVA, Poisson regression, and logistic regression, to name a few. As the name implies, a linear relationship is at the foundation of these models. 
+
+So let's start with some concepts you learned at some point which is how to represent a line. There are several ways to represent a line but the most common is the intercept/slope representation. We can express this as $y=a+b \times x$ where $a$ is the intercept and $b$ is the slope. We are saying that we can compute the value of $y$ by multiplying the value of $x$ by $b$ and adding $a$.  The intercept $a$ is the value of $y$ when $x=0$. The slope is the amount $y$ changes for each unit change in $x$. Below is a simple example shown as a plot:
+```{r,fig.width=7,fig.length=7}
+x=0:10
+a=10
+b=2
+y=a+b*x
+plot(x,y,type="l",ylim=c(0,30),xaxs="i",yaxs="i") 
+# use of "i" specifies that axis ends based on data values
+```
+
+At $x=0$, $y=a=10$ and for $x=10$ $y$ increases by $2 \times 10$ to be $y=10 + 2 \times 10 = 30$. Hopefully that was all obvious to you all but it doesn't hurt to have a refresher.
+
+Now I'll broach a subject that has confused a colleague of mine.  It is very important to remember that the intercept $a$ is the value at $x=0$. Sorry if this seems redundant but here is what happens when you redefine $x$ such that the intercept has a radically different value. Let's say you are doing a regression of average animal weight over time and you have defined time based on the year at which the weights were measured.  If $y$ is average weight and $x$ is the year which has values from 1990 to 2017, what is the value of the intercept and will it be meaningful? How can you redefine $x$ such that the intercept is meaningful?
+
+An obvious solution is to subtract 1990 from each value of $x$ such that $a$ is the predicted mean weight in 1990. Doing so changes the value of $a$ but leaves the value of $b$ unchanged. Alternatively, if you were to divide $x$ by a constant $c$ then the slope $b$ becomes $c \times b$ but $a$ is unchanged.  This latter change doesn't help with interpretation of $a$ but can be useful with some optimization problems when the value of $b$ becomes so small because the values of $x$ are so large that the unit change in $y$ for each unit change in $x$ is so small that precision limits become a problem (e.g., using inches when miles is more apprpropriate). The lesson here is that you should pay attention to the way you have defined your variables and how that affects your interpretation of the linear model coefficients.
+
+Now let's consider how we should interpret the intercept $a$ when you have more than one slope. Let's say that you want to predict average weight with a trend over years ($x$) but also temperature ($t$). So our regression could be $y=a+b_1 \times x + b_2 \times t$. Now $a$ is the value of $y$ when both $x=0$ and $t=0$. If $x$ is defined such that $x=0$ is the first year then $a$ is the predicted average weight in the first year if the temperature was 0. If temperature was in celsius, that would be the predicted weight at a freezing temperature which may or may not make sense for the data.  One option would be to redefine $t$ by subtracting off the mean value of $t$ which would redefine $a$ to be the predicted weight in the first year at the average temperature. Alternatively, the temperature in the first year could be subtracted off $t$ which would make $a$ be the predicted weight in the first year.
+
+So far we have only considered linear models with numeric variables. Now let's talk about factor variables which are also called categorical variables. A factor variable asjusts the intercept. Each level (e.g., F or M for sex) has a different intercept.  If the model only contains factor variables, there is no slope and it would be equivalent to ANOVA.  If one or more numeric variables are used as covariates with the goal of evaluating differences in intercepts (e.g., means) then it is ANCOVA.  A simple factor variable model for average weight might look like $y=a_f$ and $y=a_m$ for females and males respectively.  A plot might look like the following:
+```{r}
+af=17
+am=19
+plot(1990:2017,rep(af,28),pch="f",xlab="Year",ylab="Average weight")
+points(1990:2017,rep(am,28),pch="m")
+```
+
+Another way to describe this model uses a treatment constrast which is the default in R for factor variables. The term treatment contrast comes from the concept of a control-treatment experiment where the control is the baseline value and the effect size is measured for the treatment(s). The first factor level ("f" in this case) is treated as the control and is the baseline intercept. The parameters for the remaining factor levels measure how much different the value is from the baseline (control).  Thus for our example, the model would be expressed as  $y=\beta_0=a_f$ and $y=\beta_0 + \beta_m=a_m$. The intercept will be $\beta_0$ and the parameter $\beta_m$ is the amount males differ from females which means $\beta_m=a_m-a_f$. For the example above, $\beta_0 = 17$ and $\beta_m=2$. The models for the weights are identical but the representations differ and so will the parameter values.
+
+This leads us to the concept of a design matrix but before I go there I'm going to simulate some data that we can use. I'll create a dataframe with 28 rows for females and 28 rows for males and use "rnorm" to generate average weights (17 for females and 19 for males) with some variation across years (sd=1). I used "set.seed" function so we all get the same results.
+```{r}
+set.seed(413993)
+Weight_df=data.frame(Year=rep(1990:2017,2),Sex=factor(rep(c("F","M"),each=28)),Weight=c(rnorm(28,17,1),rnorm(28,19,1)))
+head(Weight_df)
+tail(Weight_df)
+```
+
+Now that we have some data we can talk about R formulas and design matrices for linear models. An R formula is structured as:
+
+Dependent variable ~ independent variables and operators
+
+For example, if we wanted to specify a model in which weight only varied by sex, the formula would be Weight~Sex. R knows that Weight is a numeric variable and Sex is a factor variable. The formula and the data can be used to create a design matrix (DM) which describes the relationship between the independent variables, dependent variables and estimated parameters.  You can look at a design matrix with the "model.matrix" function in R.
+```{r}
+DM=model.matrix(Weight~Sex,data=Weight_df)
+unique(DM)
+Weight_df[1,]
+Weight_df[29,]
+```
+Notice that "model.matrix" didn't use "Weight" to construct the DM because it is solely determined by the independent variables (the right hand side).  I could have excluded it and started the formula with ~ but I wanted to make it explicit here as that is the formula we will use with the "lm" function. The DM is a matrix with 56 rows (one row for each row in the data) and 2 columns for this model. The first column is the intercept ($\beta_0$) and the second column is for the male "treatment" which is $\beta_m$. With values of the parameters I can use matrix multiplication ("%*%") to get the predicted value for weight as shown below:
+```{r}
+parameters=c(beta0=17,betam=2)
+parameters
+predictions=DM%*%parameters
+unique(predictions)
+```
+To refresh your memory about matrix multiplication I'll describe the calculations. For the first 28 rows (for females), the vector c(1,0) is multiplied elementwise with c(17,2) and the values are added which gives $17 \times 1 + 2 \times 0 = 17$.  For the last 28 rows, the vector c(1,1) is multiplied elementwise with c(17,2) and the values are added which is $17 \times 1 + 2 \times 1 = 19$. It really is that simple. 
+
+With normal linear models, the predicted value minus the data value is the residual and these are used to find the best fitting set of parameter values that minimize the sum of the squared residuals to provide the best fit to the data. Below we use the "lm" function to fit the model and a plot of the results.
+```{r}
+model1=lm(Weight~Sex,data=Weight_df)
+summary(model1)
+```
+```{r}
+plot(Weight_df$Year[1:28],(DM%*%coef(model1))[1:28],ylim=c(15,21),xlab="Year",ylab="Weight",type="l")
+lines(Weight_df$Year[29:56],(DM%*%coef(model1))[29:56],lty=2)
+points(Weight_df$Year,Weight_df$Weight,pch=rep(c("f","m"),each=28))
+```
+
+A model with only an intercept (single mean value) is specified with ~1 as shown below.  Notice the jump in the residual standard error from ignoring the effect of Sex.
+```{r}
+model0=lm(Weight~1,data=Weight_df)
+summary(model0)
+```
+
+We can specify the model with separate female-male means using ~-1+Sex which tells R to remove the intercept.
+```{r}
+model2=lm(Weight~0+Sex,data=Weight_df)
+summary(model2)
+```
+
+As you can see the only difference is in the estimated parameters; although it does mess up the reported R-squared and F-statistic. I wouldn't necessarily use -1 for "lm" but it can be useful with RMark. You can compare these models with the "anova" function or use the "AIC" function which shows that model1 and model2 are identical fits to the data.
+```{r}
+anova(model0,model1)
+anova(model1,model2)
+AIC(model0)
+AIC(model1)
+AIC(model2)
+```
+
+Now let's consider a model with a trend over years but no sex effect.
+```{r}
+model3=lm(Weight~Year,data=Weight_df)
+summary(model3)
+```
+The slope for year is not significant but this is expected because I didn't include a trend in the simulated data. However, let's look at the DM to understand how the model is created. 
+```{r}
+DM=model.matrix(~Year,data=Weight_df)
+unique(DM)
+```
+Again we can compute the predicted values with
+```{r}
+predictions=DM%*%coef(model3)
+unique(predictions)
+```
+
+Notice that the estimated intercept is -15.88 which is rather nonsensical result for almost 2000 years prior to the start of the data. Granted it doesn't affect the model fit for data between 1990 and 2017 but it makes the intercept less interpretable. So lets modify the value of Year and show the DM and model summary.
+```{r}
+Weight_df$Y=Weight_df$Year-1990
+DM=model.matrix(~Y,data=Weight_df)
+unique(DM)
+model4=lm(Weight~Y,data=Weight_df)
+summary(model4)
+```
+Now it is clear that the intercept is for Y=0 which is Year=1990 but the slope and model fit are unchanged.
+
+Let's consider an additive model with both Sex and year(Y). An additive model is specified with a "+" as shown below.
+```{r}
+DM=model.matrix(~Sex+Y,data=Weight_df)
+unique(DM)
+model5=lm(Weight~Sex+Y,data=Weight_df)
+summary(model5)
+```
+We have 3 parameters: 1) an intercept for females in 1990, 2) a sex effect for males, and 3) a slope over years which is the same for each sex. You can see from the DM that the model is $Weight=\beta_0+\beta_Y \times Y$ for females and $Weight=\beta_0+ \beta_M + \beta_Y \times Y$ for males. The model specifies 2 lines that have different intercepts but a common slope over time.
+
+Finally we will consider how to specify an interaction of two independent variables. An asterisk is used to specify a model with both main effects and the interaction as in ~Sex*Y. This formula is equivalent to ~Sex+Y+Sex:Y where ":" specifies the interaction between Sex and Y. Many people get confused by interactions but they are relatively straightforward if you keep in mind what types of variables you are interacting.  Also, it is useful to remember that an interaction is essentially multiplication. This is made clear by looking at the design matrix.
+```{r}
+DM=model.matrix(~Sex*Y,data=Weight_df)
+unique(DM)
+```
+The first 3 columns are identical to the DM for the additive model.  What is different is the last column specified by Sex:Y which is simply the elementwise multiplication of the SexM column and the Y column.  It is 0 for females because SexM=0 for females and it is Y for males because SexM=1 for males. 
+
+Before we run the model, let's work out the specified model from the DM. It is $Weight=\beta_0+\beta_Y \times Y$ for females and $Weight=\beta_0+ \beta_M + \beta_Y \times Y +\beta_{MY} \times Y$ for males, which can also be expressed as $Weight=\beta_0+ \beta_M + (\beta_Y +\beta_{MY}) \times Y$.  The interpretation of $\beta_{MY}$ is similar to $\beta_M$ in that it measures how much different the trend slope is for males relative to the trend for females.  The model has 4 parameters which specifies 2 lines which can each have different intercepts and different slopes, which is the classic definition of an interaction that you may have learned in a linear regression class. Now let's fit the model.
+```{r}
+model6=lm(Weight~Sex*Y,data=Weight_df)
+summary(model6)
+```
+The intercept for females is 16.76066 and for males is 16.76066+2.44501.  The slope over years for females is 0.03380 and for males is 0.03380-0.03357. Notice that neither the slope nor the interaction for slope are significant because there is no trend in the simulated data.
+
+Finally, we will consider one more model for the sake of completeness but that probably isn't useful in general. I have been told by some folks that they were told in their statistics course to never consider a model with an interaction that didn't also had the main effects.  I'm not sure why they were told that because they can be useful sometimes.  We'll consider a model that has a common intercept but has different slopes for each sex.  That is done as follows:
+```{r}
+DM=model.matrix(~Sex:Y,data=Weight_df)
+unique(DM)
+model7=lm(Weight~Sex:Y,data=Weight_df)
+summary(model7)
+```
+Clearly it is not a good model for this data that does have a main effect for sex and has no trend but it does illustrate how you can create models with interactions without main effects.  This is typically more useful when the interaction is for factor variables.  If I have 2 factor variables fac1 and fac2, then the formula ~ -1 + fac1:fac2 will fit a separate intercept for each combination of levels of fac1 and fac2 and each will be estimated separately.  Using the interaction without an intercept can be useful later with RMark when not all combinations of the levels exist such as with age and time. 
+
+I'll show one more example but this time for a logistic regression because it will help introduce the MARK and RMark classes later on. Logistic regression belongs to the class of general linear models which don't require a normal distribution for the error structure and don't necessarily have a linear relationship between the data and the model parameters. Logistic regression is used to model Bernoulli or binomial data.  Bernoulli data is a special case of binomial data with the result being a 0/1 variable from a single trial.  Some examples might be TRUE/FALSE, Yes/No or survive/die.  I'll use the latter as an example because it leads to many capture-recapture problems.
+
+I'll generate some simulated survival data using Sex and Year factor variables.
+```{r}
+years=2000:2002
+# create a data frame and a design matrix to construct the model
+mydata=data.frame(years=factor(rep(years,each=100)),sex=rep(rep(c("M","F"),each=50),3))
+DM=model.matrix(~-1+sex+years,mydata)
+unique(DM)
+```
+For generalized linear models and capture-recapture models, you need to understand the concept of a link function and inverse link function. For logistic regression, the link function is the logit link which is $ln[p/(1-p)]$ where $p$ is a probability. The link function is a linear function of the predictor variables (covariates). For our example the logit link for males in 2002 is $ln[p/(1-p)]=\beta_0+\beta_M+\beta_{2002}$. What is it for females in 2001? 
+
+The inverse logit link provides a direct calculation of $p$ from the predictor variables and parameters. The inverse logit link function is $p=1/(1+exp(-\beta_0-\beta_M-\beta_{2002}))$. It can also be expressed as $p=exp(\beta_0+\beta_M+\beta_{2002})/(1+exp(\beta_0+\beta_M+\beta_{2002}))$ which makes it more clear that it is bounded between 0 and 1 because $exp(x)>0$ for all $x$ and the numerator is smaller than the denominator. In R the inverse logit link is computed by the "plogis" function which uses the first form shown because it is less susceptible to numerical problems. In RMark, the logit link is used as the default link function for any probability parameters(e.g., Phi,p). 
+
+Below I generate some survival probabilities with the "plogis" function and $\beta_0=1$,$\beta_M=-1$,$\beta_{2001}=1$,and $\beta_{2002}=2$. What pair of factor variables is represented by the intercept $\beta_0$? 
+
+```{r}
+# Create a vector of survival probabilities using the plogis function which computes the inverse logit
+# of a linear relationship and constrains the value to be a a probability bounded between 0 and 1.
+SurvivalProbability=plogis(DM%*%c(1,-1,1,2))
+mydata$S=SurvivalProbability
+# Show the values of S for each year and sex
+tapply(mydata$S,list(mydata$years,mydata$sex),unique)
+```
+
+Next I generate 300 Bernoulli random variables with a size=1 (1 trial) and result of 0 (dead) or 1(alive) with probability defined by $S$.  The resulting proportions of animals that survived in each of the 6 categories is shown.
+```{r}
+set.seed(93201)
+mydata$live=rbinom(300,size=1,prob=mydata$S)
+tapply(mydata$live,list(mydata$years,mydata$sex),mean)
+```
+
+Fitting a generalized linear model is not much different than fitting a linear model. You use the "glm" function in replace of "lm" and you have to specify the error structure with the "family" argument. 
+```{r}
+glm_model0=glm(live~sex+years,data=mydata,family="binomial")
+summary(glm_model0)
+```
+The formula specifies the independent variable (live) and the relationship between the dependent variables which is an additive sex+years model below. But unlike "lm" the predictor variables do not directly relate to the value of the "live" but instead to the mean value of "live" which is $p$ through the inverse link function.  Thus the model is for a parameter and not the data value.  This is equivalent to what you do in capture-recapture in wich the model is for the parameters like survival (Phi) and capture probability (p) which are used to explain the data which is a capture history for the animal.
+
+# Exercise 4
+1) Use library(RMark) to attach the RMark package.
+2) Use data(dipper) to attach dipper dataframe.
+3) How many records are in the dipper data and what are the field names and types?
+4) Build the default model for these data with mymodel=mark(dipper). Can you work out the contents of the summary?
+5) The beta parameters are logit link parameters. How would you compute the real parameters from the beta values?
+6) What is class of mymodel? Is it a list? 
+7) Show the structure of the results element in mymodel.
+8) What happens if you enter mymodel at the R prompt?
+9) What happens if you enter summary(mymodel)? What function is run when you type summary(mymodel)? Assign the value of summary(mymodel) to an object. What is its class and structure? 
+
+
+
